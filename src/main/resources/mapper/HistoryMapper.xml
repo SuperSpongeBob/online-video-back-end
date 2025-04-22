@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.onlinevideo.Mapper.HistoryMapper">
+    <insert id="insertHistory" parameterType="com.example.onlinevideo.Entity.History" keyProperty="historyId" useGeneratedKeys="true">
+        INSERT INTO history (
+        <trim suffixOverrides=",">
+            <if test="videoId!= null">video_id,</if>
+            <if test="userId!= null">user_id,</if>
+            <if test="watchedSeconds != null">watched_seconds,</if>
+            <if test="timestamp!=null and timestamp!=''">timestamp,</if>
+        </trim>
+        )
+        VALUES (
+        <trim suffixOverrides=",">
+            <if test="videoId!= null">#{videoId},</if>
+            <if test="userId!= null">#{userId},</if>
+            <if test="watchedSeconds != null">#{watchedSeconds},</if>
+            <if test="timestamp!=null and timestamp!=''">#{timestamp}</if>
+        </trim>
+        )
+        ON DUPLICATE KEY UPDATE
+        <trim suffixOverrides=",">
+            <if test="watchedSeconds != null">watched_seconds = VALUES(watched_seconds),</if>
+            <if test="timestamp!=null and timestamp!=''">timestamp = values(timestamp)</if>
+        </trim>
+    </insert>
+
+    <select id="historyByHistoryId" parameterType="com.example.onlinevideo.Entity.History">
+        select *
+        from history
+        <where>
+            <if test="historyId!=null and historyId!=''">and history_id =#{historyId}</if>
+        </where>
+    </select>
+
+    <select id="detailHistory" parameterType="com.example.onlinevideo.Entity.History">
+        SELECT history.*, video.video_name,video.video_title,video.duration,video.video_is_vip,video.thumbnail_path, video_album.video_post_path
+        FROM history
+                 INNER JOIN video ON video.video_id = history.video_id
+                 INNER JOIN video_album ON video_album.video_album_id = video.video_album_id
+        WHERE history.user_id = #{userId}
+        order by timestamp desc
+    </select>
+
+    <delete id="deleteHistory">
+        delete from history
+        <where>
+            <if test="historyId!=null and historyId!=''">history_id =#{historyId}</if>
+            <if test="videoId!=null and videoId!=''">and video_id = #{videoId}</if>
+            <if test="userId!=null and userId!=''">and user_id = #{userId}</if>
+        </where>
+    </delete>
+</mapper>

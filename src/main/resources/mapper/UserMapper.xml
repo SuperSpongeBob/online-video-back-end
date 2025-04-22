@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.onlinevideo.Mapper.UserMapper">
+    <select id="getUsers" resultType="com.example.onlinevideo.Entity.User">
+        select user_id,user_name,user_gender,user_phone,user_email,user_add_time
+        from user
+        <where>
+            <if test="user.userId!=null and user.userId!=''">and user_id=#{user.userId}</if>
+            <if test="user.userName!=null and user.userName!=''">and user_name like "%${user.userName}%"</if>
+            <if test="user.userGender!=null and user.userGender!=''">and user_gender=#{user.userGender}</if>
+            <if test="user.userPhone!=null and user.userPhone!=''">and user_phone like "%${user.userPhone}%"</if>
+            <if test="user.userEmail!=null and user.userEmail!=''">and user_email like "%${user.userEmail}%"</if>
+            <if test="startTime!=null">and user_add_time >= #{startTime}</if>
+            <if test="endTime!=null">and user_add_time &lt;= #{endTime}</if>
+        </where>
+        order by user_id desc
+        <if test="user.pageNum!=null and user.pageSize!=null">LIMIT #{user.pageNum},#{user.pageSize}</if>
+    </select>
+
+    <select id="getUserByUserPhone" parameterType="com.example.onlinevideo.Entity.User">
+        select *
+        from user
+        where user_phone = #{userPhone};
+    </select>
+
+    <select id="findRolesByUserId" resultType="com.example.onlinevideo.Entity.Role">
+        SELECT r.role_id, r.role
+        FROM role r
+                 JOIN user_role ur ON r.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+    </select>
+
+    <select id="getUserIdByVideoId" resultType="java.lang.Integer">
+        SELECT va.user_id
+        FROM video_album va
+                 JOIN video v ON va.video_album_id = v.video_album_id
+        WHERE v.video_id = #{videoId}
+    </select>
+
+    <select id="ExistsPhone" resultType="boolean">
+        select exists(select 1 from user where user_phone = #{userPhone})
+    </select>
+
+    <!--在User表中添加一条记录-->
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into `user`(
+        <trim suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="userGender != null and userGender != ''">user_gender,</if>
+            <if test="userPhone != null and userPhone != ''">user_phone,</if>
+            <if test="userEmail != null and userEmail != ''">user_email,</if>
+            <if test="userPassword != null and userPassword != ''">user_password,</if>
+            <if test="userAddTime != null and userAddTime != ''">user_add_time,</if>
+        </trim>
+        )
+        values (
+        <trim suffixOverrides=",">
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="userGender != null and userGender != ''">#{userGender},</if>
+            <if test="userPhone != null and userPhone != ''">#{userPhone},</if>
+            <if test="userEmail != null and userEmail != ''">#{userEmail},</if>
+            <if test="userPassword != null and userPassword != ''">#{userPassword},</if>
+            <if test="userAddTime != null and userAddTime != ''">#{userAddTime},</if>
+        </trim>
+        )
+    </insert>
+
+    <!--在User表中更新一条记录-->
+    <update id="updateUser" parameterType="com.example.onlinevideo.Entity.User">
+        update `user`
+        <set>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="userGender != null and userGender != ''">user_gender = #{userGender},</if>
+            <if test="userPhone != null and userPhone != ''">user_phone = #{userPhone},</if>
+            <if test="userEmail != null and userEmail != ''">user_email = #{userEmail},</if>
+            <if test="userPassword != null and userPassword != ''">user_password = #{userPassword},</if>
+            <if test="userAddTime != null and userAddTime != ''">user_add_time = #{userAddTime},</if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <!--通过主键删除User表中的一条记录-->
+    <delete id="deleteUserById">
+        delete
+        from `user`
+        where user_id = #{userId}
+    </delete>
+
+    <select id="ExistPhoneByOtherId" resultType="com.example.onlinevideo.Entity.User">
+        select *
+        from user
+        where user_phone = #{userPhone}
+          and user_id != #{userId}
+    </select>
+
+    <update id="updateUserInfo">
+        update user
+        <set>
+            <if test="userName!=null and userName!=''">user_name=#{userName},</if>
+            <if test="userGender!=null and userGender!=''">user_gender=#{userGender},</if>
+            <if test="userPhone!=null and userPhone!=''">user_phone=#{userPhone},</if>
+            <if test="userEmail!=null and userEmail!=''">user_email=#{userEmail},</if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateUserPassword" parameterType="com.example.onlinevideo.Entity.User">
+        update user
+        set user_password=#{userNewPassword}
+        where user_id = #{userId}
+           or user_phone = #{userPhone}
+    </update>
+</mapper>

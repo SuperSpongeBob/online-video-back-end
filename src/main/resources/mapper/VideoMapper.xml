@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.onlinevideo.Mapper.VideoMapper">
+
+    <resultMap id="VideoMap" type="com.example.onlinevideo.Entity.Video">
+        <id property="videoId" column="video_id" jdbcType="INTEGER"/>
+        <id property="videoAlbumId" column="video_album_id" jdbcType="INTEGER"/>
+        <result property="videoName" column="video_name" jdbcType="VARCHAR"/>
+        <result property="videoIsVip" column="video_is_vip" jdbcType="INTEGER"/>
+        <result property="videoPath" column="video_path" jdbcType="VARCHAR"/>
+        <result property="videoTitle" column="video_title" jdbcType="VARCHAR"/>
+        <result property="duration" column="duration" jdbcType="INTEGER"/>
+        <result property="viewCount" column="view_count" jdbcType="INTEGER"/>
+        <result property="thumbnailPath" column="thumbnail_path" jdbcType="VARCHAR"/>
+        <result property="videoApprovalStatus" column="video_approval_status" jdbcType="VARCHAR"/>
+        <association property="videoAlbum" javaType="com.example.onlinevideo.Entity.VideoAlbum">
+            <id property="videoAlbumId" column="video_album_id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="videoAlbumName" column="video_album_name" jdbcType="VARCHAR"/>
+            <result property="videoChannel" column="video_channel" jdbcType="VARCHAR"/>
+            <result property="videoPostPath" column="video_post_path" jdbcType="INTEGER"/>
+            <result property="videoReleaseDate" column="video_release_date" jdbcType="VARCHAR"/>
+            <result property="videoSummary" column="video_summary" jdbcType="VARCHAR"/>
+            <result property="videoPlayNumber" column="video_play_number" jdbcType="INTEGER"/>
+            <result property="videoDirector" column="video_director" jdbcType="VARCHAR"/>
+            <result property="videoArea" column="video_area" jdbcType="VARCHAR"/>
+            <result property="videoFavoriteNumber" column="video_favorite_number" jdbcType="INTEGER"/>
+            <result property="videoUpdateTime" column="video_update_time" jdbcType="VARCHAR"/>
+            <result property="videoLastUpdate" column="video_last_update" jdbcType="INTEGER"/>
+            <result property="videoActor" column="video_actor" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+
+    <select id="verifyVideo" resultType="java.lang.Integer">
+        select video_is_vip
+        from video
+        where video_id = #{videoId}
+    </select>
+
+    <select id="getVideoIdsByAlbumId" parameterType="Integer" resultType="Integer">
+        select video_id
+        from video
+        where video_album_id = #{videoAlbumId}
+    </select>
+    <select id="getVideoPathsByVideoIds" parameterType="list" resultType="string">
+        select video_path
+        from video
+        where video_id in
+        <foreach collection="list" item="videoId" open="(" separator="," close=")">
+            #{videoId}
+        </foreach>
+    </select>
+    <select id="getThumbnailPathsByVideoIds" parameterType="list" resultType="string">
+        select thumbnail_path
+        from video
+        where video_id in
+        <foreach collection="list" item="videoId" open="(" separator="," close=")">
+            #{videoId}
+        </foreach>
+    </select>
+    <delete id="deleteVideosByVideoIds" parameterType="list">
+        delete
+        from video
+        where video_id in
+        <foreach collection="list" item="videoId" open="(" separator="," close=")">
+            #{videoId}
+        </foreach>
+    </delete>
+
+    <select id="getVideoPathByVideoId" resultType="java.lang.String">
+        select video_path
+        from video
+        where video_id = #{videoId}
+    </select>
+
+    <select id="findVideos" resultMap="VideoMap">
+        select video.*,video_album.video_channel
+        from video
+        join video_album on video.video_album_id = video_album.video_album_id
+        <where>
+            <if test="videoId!=null and videoId!=''">and video_id=#{videoId}</if>
+            <if test="videoAlbumId!=null and videoAlbumId!=''">and video.video_album_id=#{videoAlbumId}</if>
+            <if test="videoIsVip!=null">and video_is_vip=#{videoIsVip}</if>
+            <if test="videoTitle!=null and videoTitle!=''">and video_title like "%${videoTitle}%"</if>
+            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">and
+                video_approval_status=#{videoApprovalStatus}
+            </if>
+            <if test="videoName!=null and videoName!=''">and video_name LIKE "%${videoName}%"</if>
+
+
+            <!--            <if test="videoAlbum.videoAlbumId!=null and videoAlbum.videoAlbumId!=''">and-->
+            <!--                va.video_album_id=#{videoAlbum.videoAlbumId}-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.userId!=null and videoAlbum.userId!=''">and va.user_id=#{videoAlbum.userId}</if>-->
+            <!--            <if test="videoAlbum.videoAlbumName!=null and videoAlbum.videoAlbumName!=''">and va.video_album_Name like-->
+            <!--                "%${videoAlbum.videoAlbumName}%"-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoReleaseDate!=null and videoAlbum.videoReleaseDate!=''">and va.video_release_date-->
+            <!--                like "%${videoAlbum.videoReleaseDate}%"-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoSummary!=null and videoAlbum.videoSummary!=''">and va.video_summary like-->
+            <!--                "%${videoAlbum.videoSummary}%"-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoPlayNumber !=null and videoAlbum.videoPlayNumber!=''">and va.video_play_number-->
+            <!--                =#{videoAlbum.videoPlayNumber}-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoChannel!=null and videoAlbum.videoChannel!=''">and-->
+            <!--                va.video_channel=#{videoAlbum.videoChannel}-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoDirector!=null and videoAlbum.videoDirector!=''">and va.video_director like-->
+            <!--                "%${videoAlbum.videoDirector}%"-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoArea!=null and videoAlbum.videoArea!=''">and va.video_area like "%${videoAlbum.videoArea}%"-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoFavoriteNumber!=null and videoAlbum.videoFavoriteNumber!=''">and-->
+            <!--                va.video_favorite_number=#{videoAlbum.videoFavoriteNumber}-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoUpdateTime!=null and videoAlbum.videoUpdateTime!=''">and va.video_update_time like-->
+            <!--                "%${videoAlbum.videoUpdateTime}%"-->
+            <!--            </if>-->
+            <!--            <if test="videoAlbum.videoActor!=null and videoAlbum.videoActor!=''">and va.video_actor like-->
+            <!--                "%${videoAlbum.videoActor}%"-->
+            <!--            </if>-->
+        </where>
+        order by video_id desc
+        <if test="pageNum!=null and pageSize!=null">LIMIT #{pageNum},#{pageSize}</if>
+    </select>
+
+    <select id="getIndexVideo" resultType="com.example.onlinevideo.Entity.Video">
+        select v.*,va.*
+        from video v
+        join video_album va on v.video_album_id = va.video_album_id
+        <where>
+            <if test="videoId!=null and videoId!=''">and video_id=#{videoId}</if>
+            <if test="videoName!=null and videoName!=''">and video_name like "%${videoName}%"</if>
+            <if test="videoIsVip!=null and videoIsVip!=''">and video_is_vip=#{videoIsVip}</if>
+            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">and
+                v.video_approval_status=#{videoApprovalStatus}
+            </if>
+            <if test="videoAlbum.userId!=null and videoAlbum.userId!=''">and va.user_id=#{videoAlbum.userId}</if>
+            <if test="videoAlbum.videoAlbumId!=null and videoAlbum.videoAlbumId!=''">and
+                va.video_album_id=#{videoAlbum.videoAlbumId}
+            </if>
+            <if test="videoAlbum.videoChannel!=null and videoAlbum.videoChannel!=''">and
+                va.video_channel=#{videoAlbum.videoChannel}
+            </if>
+        </where>
+        order by v.video_id desc
+        <if test="pageNum!=null and pageSize!=null">LIMIT #{pageNum},#{pageSize}</if>
+    </select>
+
+    <select id="findVideoByVideoId" resultType="com.example.onlinevideo.Entity.Video">
+        select *
+        from video
+        where video_id = #{videoId}
+    </select>
+
+    <select id="SearchVideo" resultMap="VideoMap">
+        select v.* ,va.video_post_path
+        from video v
+        join video_album va on v.video_album_id=va.video_album_id
+        <where>
+            <if test="videoName!=null and videoName!=''">
+                (v.video_name LIKE "%${videoName}%"
+                OR v.video_title LIKE "${videoName}%"
+                OR va.video_album_name LIKE "%${videoName}%"
+                OR va.video_summary LIKE "%${videoName}%"
+                OR va.video_channel LIKE "%${videoName}%"
+                OR va.video_actor LIKE "%${videoName}%"
+                OR va.video_director LIKE "%${videoName}%")
+            </if>
+            <if test="videoApprovalStatus != null and videoApprovalStatus != ''">
+                and v.video_approval_status=#{videoApprovalStatus}
+            </if>
+        </where>
+        order by v.video_id desc
+        <if test="pageNum!=null and pageSize!=null">LIMIT #{pageNum},#{pageSize}</if>
+    </select>
+
+    <insert id="insertVideo" parameterType="com.example.onlinevideo.Entity.Video">
+        insert into `video`(
+        <trim suffixOverrides=",">
+            <if test="videoIsVip != null and videoIsVip != ''">video_is_vip,</if>
+            <if test="videoName != null and videoName != ''">video_name,</if>
+            <if test="videoPath != null and videoPath != ''">video_path,</if>
+            <if test="videoTitle != null and videoTitle != ''">video_title,</if>
+            <if test="videoAlbumId!=null and videoAlbumId!=''">video_album_id,</if>
+            <if test="duration!=null and duration!=''">duration,</if>
+            <if test="thumbnailPath!=null and thumbnailPath!=''">thumbnail_path,</if>
+            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">video_approval_status,</if>
+        </trim>
+        )
+        values (
+        <trim suffixOverrides=",">
+            <if test="videoIsVip != null and videoIsVip != ''">#{videoIsVip},</if>
+            <if test="videoName != null and videoName != ''">#{videoName},</if>
+            <if test="videoPath != null and videoPath != ''">#{videoPath},</if>
+            <if test="videoTitle != null and videoTitle != ''">#{videoTitle},</if>
+            <if test="videoAlbumId != null and videoAlbumId != ''">#{videoAlbumId},</if>
+            <if test="duration != null and duration != ''">#{duration},</if>
+            <if test="thumbnailPath!=null and thumbnailPath!=''">#{thumbnailPath},</if>
+            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">#{videoApprovalStatus},</if>
+        </trim>
+        )
+    </insert>
+
+    <update id="updateVideo">
+        update video
+        <set>
+            <if test="videoIsVip!=null and videoIsVip!=''">video_is_vip=#{videoIsVip},</if>
+            <if test="videoName!=null and videoName!=''">video_name=#{videoName},</if>
+            <if test="videoTitle!=null and videoTitle!=''">video_title=#{videoTitle},</if>
+            <if test="videoPath!=null and videoPath!=''">video_path=#{videoPath},</if>
+            <if test="videoAlbumId!=null and videoAlbum!=''">video_album_id=#{videoAlbumId},</if>
+            <if test="duration != null and duration !=''">duration=#{duration},</if>
+            <if test="thumbnailPath!=null and thumbnailPath!=''">thumbnail_path=#{thumbnailPath},</if>
+            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">
+                video_approval_status=#{videoApprovalStatus},
+            </if>
+        </set>
+        where video_id=#{videoId}
+    </update>
+
+    <update id="reiterateVideo">
+        update video
+        <set>
+            video_approval_status = "待审核"
+        </set>
+        where video_id = #{videoId}
+    </update>
+
+    <delete id="deleteVideo">
+        delete
+        from `video`
+        where video_id = #{videoId}
+    </delete>
+
+    <select id="existsVideo" resultType="boolean">
+        select exists(select 1 from video
+        <where>
+            <if test="videoId!=null and videoId!=''">video_id=#{videoId}</if>
+            <if test="videoAlbumId!=null and videoAlbumId!=''">video_album_id=#{videoAlbumId}</if>
+        </where>
+        )
+    </select>
+
+    <update id="increaseViewCount">
+        update video
+        set view_count = view_count + #{viewCount}
+        where video_id = #{videoId}
+    </update>
+
+    <!-- 获取最新视频 -->
+    <select id="selectNewestVideos" resultType="com.example.onlinevideo.Entity.Video">
+        SELECT *
+        FROM video
+        where video_approval_status = "审核通过"
+        ORDER BY video_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 获取最热视频 -->
+    <select id="selectHottestVideos" resultType="com.example.onlinevideo.Entity.Video">
+        SELECT *
+        FROM video
+        where video_approval_status = "审核通过"
+        ORDER BY view_count DESC, video_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 按video_id逆序分页获取视频 -->
+    <select id="selectVideosOrderByIdDesc" resultType="com.example.onlinevideo.Entity.Video">
+        SELECT *
+        FROM video
+        where video_approval_status = "审核通过"
+        ORDER BY video_id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+</mapper>

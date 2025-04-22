@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.onlinevideo.Mapper.DanmakuMapper">
+
+    <insert id="insertDanmaku" parameterType="com.example.onlinevideo.Entity.Danmaku" keyProperty="danmakuId" useGeneratedKeys="true">
+        insert into danmaku(
+        <trim suffixOverrides=",">
+            <if test="videoId!=null and videoId != ''">video_id,</if>
+            <if test="text!=null and text != ''">text,</if>
+            <if test="time != null and time != ''">time,</if>
+            <if test="userId!=null and userId!=''">user_id,</if>
+        </trim>
+        )
+        values(
+        <trim suffixOverrides=",">
+            <if test="videoId!=null and videoId != ''">#{videoId},</if>
+            <if test="text!=null and text != ''">#{text},</if>
+            <if test="time != null and time != ''">#{time},</if>
+            <if test="userId!=null and userId!=''">#{userId},</if>
+        </trim>
+        )
+    </insert>
+    
+    <select id="getDanmaku" parameterType="com.example.onlinevideo.Entity.Danmaku">
+        select * from danmaku
+        <where>
+            <choose>
+                <when test="videoId!=null and videoId!=''">video_id = #{videoId}</when>
+                <when test="userId!=null and userId!=''">user_id = #{userId}</when>
+            </choose>
+        </where>
+    </select>
+    
+    <delete id="deleteDanmaku">
+        delete from danmaku
+        <where>
+            <choose>
+            <when test="danmakuId!=null and danmakuId!=''">danmaku_id = #{danmakuId}</when>
+                <when test="videoId!=null and videoId!=''">video_id = #{videoId}</when>
+                <when test="userId!=null and userId!=''">user_id = #{userId}</when>
+            </choose>
+        </where>
+    </delete>
+</mapper>

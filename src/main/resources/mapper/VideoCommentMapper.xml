@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.onlinevideo.Mapper.VideoCommentMapper">
+
+    <select id="getVideoCommentsByVideoId" resultType="com.example.onlinevideo.Entity.VideoComment">
+        SELECT comment.*, user.user_name
+        FROM comment
+        JOIN user ON comment.user_id = user.user_id
+        WHERE video_id = #{videoId}
+        order by video_comment_id desc
+        LIMIT #{pageNum}, #{pageSize}
+    </select>
+
+    <insert id="addVideoComment" parameterType="com.example.onlinevideo.Entity.VideoComment">
+        insert into comment (video_comment_content,video_comment_time,user_id,video_id)
+        values (#{Comment.videoCommentContent},#{Comment.videoCommentTime},#{Comment.userId},#{Comment.videoId})
+    </insert>
+
+    <delete id="deleteComment">
+        delete from comment
+        <where>
+            <choose>
+                <when test="videoCommentId!=null and videoCommentId!=''">video_comment_id = #{videoCommentId}</when>
+                <when test="videoId!=null and videoId!=''">video_id = #{videoId}</when>
+                <when test="userId!=null and userId!=''">user_id = #{userId}</when>
+            </choose>
+        </where>
+    </delete>
+
+
+</mapper>

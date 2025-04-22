@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.onlinevideo.Mapper.UserRoleMapper">
+    <resultMap id="UserRoleMap" type="com.example.onlinevideo.Entity.UserRole">
+        <id column="user_role_id" property="userRoleId"/>
+        <result column="user_id" property="userId"/>
+        <result column="role_id" property="roleId"/>
+    </resultMap>
+    <select id="getRoleIdByUserId" parameterType="com.example.onlinevideo.Entity.UserRole">
+        select * from user_role where user_id=#{userId}
+    </select>
+
+    <insert id="addUserRole" parameterType="com.example.onlinevideo.Entity.UserRole" keyProperty="userRoleId" useGeneratedKeys="true">
+        insert into user_role(
+        <trim suffixOverrides=",">
+            <if test="userId!=null and userId!=''">user_id,</if>
+            <if test="roleId!=null and roleId!=''">role_id,</if>
+        </trim>
+        )
+        values (
+        <trim suffixOverrides=",">
+            <if test="userId!=null and userId!=''">#{userId},</if>
+            <if test="roleId!=null and roleId!=''">#{roleId},</if>
+        </trim>
+        )
+    </insert>
+
+    <update id="updateUserRole" parameterType="com.example.onlinevideo.Entity.UserRole">
+        update user_role
+        <set>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="roleId != null and roleId != ''">role_id = #{roleId}</if>
+        </set>
+        <where>
+            <if test="userRoleId != null and userRoleId != ''">user_role_id = #{userRoleId}</if>
+            or
+            <if test="userId != null and userId != ''">user_id = #{userId}</if>
+        </where>
+    </update>
+</mapper>
