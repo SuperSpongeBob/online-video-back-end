@@ -3,7 +3,7 @@
 
 管理员：账号：17806573192	密码：admin123
 VIP用户：账号：18613163192 密码：vip123
-普通用户：账号：17800000000 密码：user123
+普通用户：账号：17806570000 密码：user123
 
 IntelliJ IDEA 2024.1 (Ultimate Edition)
 Build #IU-241.14494.240, built on March 28, 2024
