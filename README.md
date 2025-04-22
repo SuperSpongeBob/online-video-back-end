@@ -5,6 +5,71 @@
 VIP用户：账号：18613163192 密码：vip123
 普通用户：账号：17806570000 密码：user123
 
+nginx配置如下：
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;	#启用高效文件传输
+    tcp_nopush     on;	#减少网络报文数量
+	tcp_nodelay on;	#禁用 Nagle 算法
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    server {
+        listen       80;
+        #server_name  localhost;
+	server_name  192.168.1.1;
+ 
+	location /images/ {
+		alias E:/mysqlStorage/images/;
+		autoindex on;
+		expires 1h;	#在浏览器缓存一个小时
+		add_header Cache-Control "public, no-transform";
+	}
+
+	location /api/upload {
+		#仅针对上传接口放宽限制
+		client_max_body_size 200M;
+		
+		proxy_pass http://localhost:8080/api/upload;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	}
+
+
+#禁止直接访问视频目录
+        location /videos/ {
+            internal;	#仅允许内部重定向访问
+            alias E:/mysqlStorage/videos/;
+		add_header Content-Type "video/mp4";  # 强制设置类型
+		#autoindex off;	#禁止目录遍历
+        }
+
+#代理后的接口请求
+	location /api/{
+		proxy_pass http://localhost:8080/api/;
+        	proxy_set_header Host $host;
+        	proxy_set_header X-Real-IP $remote_addr;
+        	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}
+
+以下为项目运行环境
 IntelliJ IDEA 2024.1 (Ultimate Edition)
 Build #IU-241.14494.240, built on March 28, 2024
 Licensed to kiddy inseams
