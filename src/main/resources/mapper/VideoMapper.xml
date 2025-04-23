@@ -75,7 +75,7 @@
         where video_id = #{videoId}
     </select>
 
-    <select id="findVideos" resultMap="VideoMap">
+    <select id="findVideos" resultType="com.example.onlinevideo.DTO.VideoDTO">
         select video.*,video_album.video_channel
         from video
         join video_album on video.video_album_id = video_album.video_album_id
@@ -129,22 +129,15 @@
     </select>
 
     <select id="getIndexVideo" resultType="com.example.onlinevideo.Entity.Video">
-        select v.*,va.*
+        select v.*
         from video v
-        join video_album va on v.video_album_id = va.video_album_id
+
         <where>
             <if test="videoId!=null and videoId!=''">and video_id=#{videoId}</if>
             <if test="videoName!=null and videoName!=''">and video_name like "%${videoName}%"</if>
             <if test="videoIsVip!=null and videoIsVip!=''">and video_is_vip=#{videoIsVip}</if>
             <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">and
                 v.video_approval_status=#{videoApprovalStatus}
-            </if>
-            <if test="videoAlbum.userId!=null and videoAlbum.userId!=''">and va.user_id=#{videoAlbum.userId}</if>
-            <if test="videoAlbum.videoAlbumId!=null and videoAlbum.videoAlbumId!=''">and
-                va.video_album_id=#{videoAlbum.videoAlbumId}
-            </if>
-            <if test="videoAlbum.videoChannel!=null and videoAlbum.videoChannel!=''">and
-                va.video_channel=#{videoAlbum.videoChannel}
             </if>
         </where>
         order by v.video_id desc

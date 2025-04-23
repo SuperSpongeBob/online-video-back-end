@@ -2,6 +2,7 @@ package com.example.onlinevideo.Controller;
 
 import com.example.onlinevideo.Annotation.CheckOwnership;
 import com.example.onlinevideo.Annotation.RateLimit;
+import com.example.onlinevideo.DTO.UserDTO;
 import com.example.onlinevideo.Entity.User;
 import com.example.onlinevideo.Security.JwtTokenProvider;
 import com.example.onlinevideo.Service.UserService;
@@ -33,7 +34,7 @@ public class UserController {
     @PostMapping("/updateUserPassword")
     @RateLimit(maxRequests = 2)
     @CheckOwnership(expression = "#user.userId")
-    public ResponseEntity<?> updateUserPassword(@RequestBody User user, HttpServletRequest request) {
+    public ResponseEntity<?> updateUserPassword(@RequestBody UserDTO user, HttpServletRequest request) {
         //  解析出token
         String token = jwtTokenProvider.resolveToken(request);
         if (token==null){

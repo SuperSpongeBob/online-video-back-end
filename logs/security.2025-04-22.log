@@ -1,0 +1,60 @@
+2025-04-22 23:50:32 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [hasRole('ROLE_ADMIN')] for Deferred [Mvc [pattern='/api/admin/**'], Ant [pattern='/api/admin/**']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [hasAnyRole('ROLE_ADMIN','ROLE_VIP','ROLE_USER')] for Deferred [Mvc [pattern='/api/update**'], Ant [pattern='/api/update**']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [hasAnyRole('ROLE_ADMIN','ROLE_VIP','ROLE_USER')] for Deferred [Mvc [pattern='/api/delete**'], Ant [pattern='/api/delete**']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [hasAnyRole('ROLE_ADMIN','ROLE_VIP','ROLE_USER')] for Deferred [Mvc [pattern='/api/insert**'], Ant [pattern='/api/insert**']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [hasAnyRole('ROLE_ADMIN','ROLE_VIP','ROLE_USER')] for Deferred [Mvc [pattern='/api/add**'], Ant [pattern='/api/add**']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [hasAnyRole('ROLE_ADMIN','ROLE_VIP','ROLE_USER')] for Deferred [Mvc [pattern='/api/upload'], Ant [pattern='/api/upload']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/videos'], Ant [pattern='/api/videos']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/auth/**'], Ant [pattern='/api/auth/**']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/searchVideo'], Ant [pattern='/api/searchVideo']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/videoComment'], Ant [pattern='/api/videoComment']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/getDanmaku'], Ant [pattern='/api/getDanmaku']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/IndexVideos'], Ant [pattern='/api/IndexVideos']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/recommendVideos'], Ant [pattern='/api/recommendVideos']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/increaseViewCount'], Ant [pattern='/api/increaseViewCount']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/existsVideo'], Ant [pattern='/api/existsVideo']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/verify'], Ant [pattern='/api/verify']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/generate-temporary-token'], Ant [pattern='/api/generate-temporary-token']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [permitAll] for Deferred [Mvc [pattern='/api/static/video'], Ant [pattern='/api/static/video']]
+2025-04-22 23:50:32 [main] DEBUG o.s.s.w.a.e.ExpressionBasedFilterInvocationSecurityMetadataSource - Adding web access control expression [authenticated] for any request
+2025-04-22 23:50:32 [main] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, FilterSecurityInterceptor
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/auth/logout
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-1] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [POST /api/auth/logout] with attributes [permitAll]
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/auth/logout
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/IndexVideos
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/IndexVideos
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-4] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [POST /api/IndexVideos] with attributes [permitAll]
+2025-04-22 23:51:19 [http-nio-127.0.0.1-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/IndexVideos
+2025-04-22 23:51:22 [http-nio-127.0.0.1-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/IndexVideos
+2025-04-22 23:51:22 [http-nio-127.0.0.1-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:51:22 [http-nio-127.0.0.1-8080-exec-3] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [POST /api/IndexVideos] with attributes [permitAll]
+2025-04-22 23:51:22 [http-nio-127.0.0.1-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/IndexVideos
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/videoComment
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/videoComment
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-6] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [POST /api/videoComment] with attributes [permitAll]
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/videoComment
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/verify?videoId=50
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/getDanmaku
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-7] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [GET /api/verify?videoId=50] with attributes [permitAll]
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/verify?videoId=50
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/getDanmaku
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-9] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [POST /api/getDanmaku] with attributes [permitAll]
+2025-04-22 23:51:23 [http-nio-127.0.0.1-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/getDanmaku
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/videoComment
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/verify?videoId=50
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/getDanmaku
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-2] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [GET /api/verify?videoId=50] with attributes [permitAll]
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-10] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [POST /api/videoComment] with attributes [permitAll]
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-1] DEBUG o.s.s.w.a.i.FilterSecurityInterceptor - Authorized filter invocation [POST /api/getDanmaku] with attributes [permitAll]
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/verify?videoId=50
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/videoComment
+2025-04-22 23:56:03 [http-nio-127.0.0.1-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/getDanmaku

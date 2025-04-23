@@ -1,6 +1,7 @@
 package com.example.onlinevideo.Service;
 
 import com.example.onlinevideo.Constant.HttpStatusEnum;
+import com.example.onlinevideo.DTO.UserDTO;
 import com.example.onlinevideo.Entity.UserRole;
 import com.example.onlinevideo.Entity.VideoAlbum;
 import com.example.onlinevideo.Mapper.UserMapper;
@@ -29,7 +30,7 @@ public class UserService {
     private UserRoleService userRoleService;
 
     //  获取用户信息
-    public List<User> getUsers(User user, Long startTime, Long endTime) {
+    public List<UserDTO> getUsers(User user, Long startTime, Long endTime) {
         return userMapper.getUsers(user, startTime, endTime);
     }
 
@@ -77,7 +78,7 @@ public class UserService {
 
     //  admin更新用户信息，无需验证
     @Transactional
-    public R updateUser(User user) {
+    public R updateUser(UserDTO user) {
         //  先判断用户手机号是否为null
         if (user.getUserPhone() == null || user.getUserPhone().isEmpty()) {
             return R.error().message("用户手机号不能够为null");
@@ -106,8 +107,14 @@ public class UserService {
         //  判断输入的旧密码是否正确
         if (passwordEncoder.matches(oldPwd, userInfo.getUserPassword())) {
             //  替换user Info中的旧密码换成新的重新插入数据库
-            userInfo.setUserNewPassword(passwordEncoder.encode(newPwd));
-            return userMapper.updateUserPassword(userInfo);     //  更新密码
+            //  更新密码
+            return userMapper.updateUserPassword(
+                    UserDTO
+                            .builder()
+                            .userPhone(userPhone)
+                            .userId(userInfo.getUserId())
+                            .userNewPassword(passwordEncoder.encode(newPwd))
+                            .build());
         }
         return false;
     }

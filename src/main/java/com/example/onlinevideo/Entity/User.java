@@ -26,17 +26,14 @@ public class User extends Page implements Serializable {
     private Integer userId;
     private String userName;
     private String userPassword;
-//    private Integer userIsVip;  //  即将弃用，identity代替
-    private Integer identity;
-    private String userNewPassword;
-//    private String userNickname;
     private String userGender;
     private String userPhone;
-//    private String userIdcard;
-    private String userEmail;
-//    private Integer userCredibility;
     private long userAddTime;
+    private String userEmail;
 
+//    private String userIdcard;
+//    private String userNickname;
+//    private Integer userCredibility;
 //    private String userLoginIp;
 //    private String userLoginStatu;
 //    private Integer userMoney;
