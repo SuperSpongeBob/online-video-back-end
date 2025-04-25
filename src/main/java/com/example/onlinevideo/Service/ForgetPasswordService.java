@@ -3,6 +3,7 @@ package com.example.onlinevideo.Service;
 import com.example.onlinevideo.Constant.HttpStatusEnum;
 import com.example.onlinevideo.Constant.RedisConstant;
 import com.example.onlinevideo.DTO.ForgetPasswordRequest;
+import com.example.onlinevideo.DTO.UserDTO;
 import com.example.onlinevideo.Entity.User;
 import com.example.onlinevideo.Mapper.UserMapper;
 import com.example.onlinevideo.Utils.StringUtil;
@@ -101,7 +102,7 @@ public class ForgetPasswordService {
         //  更新密码
         String encodedPassword = new BCryptPasswordEncoder().encode(request.getNewPassword());
         userMapper.updateUserPassword(
-                User.builder()
+                UserDTO.builder()
                 .userId(user.getUserId())
                 .userNewPassword(encodedPassword)
                 .build());

@@ -1,5 +1,6 @@
 package com.example.onlinevideo.Mapper;
 
+import com.example.onlinevideo.DTO.UserDTO;
 import com.example.onlinevideo.Entity.Role;
 import com.example.onlinevideo.Entity.User;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,7 +11,8 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     //  用于admin的获取用户信息，按条件获取
-    List<User> getUsers(User user,Long startTime,Long endTime);
+//    List<User> getUsers(User user,Long startTime,Long endTime);
+    List<UserDTO> getUsers(User user,Long startTime,Long endTime);
     List<Role> findRolesByUserId(Integer userId);
 
     //  根据用户手机号获取用户信息
@@ -32,11 +34,11 @@ public interface UserMapper {
     boolean updateUserInfo(User user);
 
     //  admin更新用户信息
-    boolean updateUser(User user);
+    boolean updateUser(UserDTO user);
 
     //  admin根据用户id删除用户
     boolean deleteUserById(Integer userId);
 
     //  更改用户密码
-    boolean updateUserPassword(User user);
+    boolean updateUserPassword(UserDTO user);
 }

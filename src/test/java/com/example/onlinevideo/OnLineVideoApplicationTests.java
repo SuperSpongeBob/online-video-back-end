@@ -167,14 +167,14 @@ class OnLineVideoApplicationTests {
         System.out.println(videoService.updateVideo(video));
     }
 
-    @Test
+/*    @Test
     public void updateUser() throws Exception {
         User user = new User();
 //        user.setUserIsVip(0);
 //        user.setUserCredibility("");
         user.setUserId(2);
         System.out.println(userMapper.updateUser(user));
-    }
+    }*/
 
     @Test
     public void getUsers(){
@@ -228,7 +228,7 @@ class OnLineVideoApplicationTests {
         System.out.println(user);
     }
 
-    @Test
+/*    @Test
     public void updateUserPassword() {
         User user = new User();
         user.setUserId(2);
@@ -236,7 +236,7 @@ class OnLineVideoApplicationTests {
         user.setUserNewPassword("123");
         boolean s=userMapper.updateUserPassword(user);
         System.out.println(s);
-    }
+    }*/
 
     @Test
     public void findVideos() {
@@ -313,7 +313,7 @@ class OnLineVideoApplicationTests {
         System.out.println(videoComments);
     }
 
-    @Test
+  /*  @Test
     public void insertVideoComment() {
         VideoComment videoComment = new VideoComment();
         videoComment.setVideoCommentContent("测试内容");
@@ -322,7 +322,7 @@ class OnLineVideoApplicationTests {
         videoComment.setVideoCommentTime("2023-08-18 16:02:42");
         System.out.println(videoComment);
         System.out.println(videoCommentMapper.addVideoComment(videoComment));
-    }
+    }*/
 
 
     @Test

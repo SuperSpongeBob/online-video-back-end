@@ -8,6 +8,7 @@
         <result column="user_id" property="userId"/>
         <result column="role_id" property="roleId"/>
     </resultMap>
+
     <select id="getRoleIdByUserId" parameterType="com.example.onlinevideo.Entity.UserRole">
         select * from user_role where user_id=#{userId}
     </select>

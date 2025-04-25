@@ -4,12 +4,14 @@ import com.example.onlinevideo.Annotation.CheckOwnership;
 import com.example.onlinevideo.Annotation.RateLimit;
 import com.example.onlinevideo.Entity.VideoAlbum;
 import com.example.onlinevideo.Service.VideoAlbumService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "专辑")
 @RestController
 @RequestMapping("/api")
 public class VideoAlbumController {

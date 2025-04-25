@@ -9,16 +9,16 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "video")
-public class Video extends Page implements Serializable {
-    private static final long serialVersionUID = 1L;
+//@Table(name = "video")
+public class Video extends Page {
+//    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer videoId;
-    @Indexed
+//    @Indexed
     private Integer videoAlbumId;
     private String videoApprovalStatus;
-    @Indexed
+//    @Indexed
     private String videoName;
     private String videoPath;
     private String videoTitle;
@@ -26,7 +26,7 @@ public class Video extends Page implements Serializable {
     private Integer duration;
     private String thumbnailPath;
     private Integer videoIsVip;
-    @ManyToOne
-    private VideoAlbum videoAlbum;
+//    @ManyToOne
+//    private VideoAlbum videoAlbum;
 
 }

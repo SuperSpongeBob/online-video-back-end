@@ -7,13 +7,14 @@ import com.example.onlinevideo.Security.JwtTokenProvider;
 import com.example.onlinevideo.Service.ForgetPasswordService;
 import com.example.onlinevideo.Service.TokenBlacklistService;
 import com.example.onlinevideo.Vo.R;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
-
+@Tag(name = "登录、注册、忘记密码")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

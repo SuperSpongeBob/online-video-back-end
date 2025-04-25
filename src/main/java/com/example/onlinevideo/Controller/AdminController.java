@@ -2,6 +2,7 @@ package com.example.onlinevideo.Controller;
 
 import com.example.onlinevideo.Annotation.RateLimit;
 import com.example.onlinevideo.DTO.RegisterRequest;
+import com.example.onlinevideo.DTO.UserDTO;
 import com.example.onlinevideo.Entity.User;
 import com.example.onlinevideo.Entity.UserRole;
 import com.example.onlinevideo.Entity.Video;
@@ -12,6 +13,8 @@ import com.example.onlinevideo.Service.UserService;
 import com.example.onlinevideo.Service.VideoAlbumService;
 import com.example.onlinevideo.Service.VideoService;
 import com.example.onlinevideo.Vo.R;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Tag(name = "管理员接口")
 @RequestMapping("/api/admin")
 public class AdminController {
     @Autowired
@@ -33,18 +37,11 @@ public class AdminController {
     private VideoAlbumMapper videoAlbumMapper;
 
     @PostMapping("/users")      //  获取用户信息
+    @Operation(summary = "获取用户信息")
     public ResponseEntity<?> getUsers(@RequestBody User user,
                                       @RequestParam(required = false) Long startTime,
                                       @RequestParam(required = false) Long endTime) {
-        List<User> users = userService.getUsers(user, startTime, endTime);      //  获取user表中的所有用户信息
-        //  遍历赋值
-        for (User user1 : users) {
-            //  根据userId获取roleId赋值到identity传到前端以展示身份
-            UserRole userRole = userRoleService.getRoleIdByUserId(user1.getUserId());
-            if (userRole != null) {
-                user1.setIdentity(userRole.getRoleId());
-            }
-        }
+        List<UserDTO> users = userService.getUsers(user, startTime, endTime);      //  获取user表中的所有用户信息
         if (!users.isEmpty()) {
             return ResponseEntity.ok(users);
         } else {
@@ -53,6 +50,7 @@ public class AdminController {
     }
 
     @PostMapping("/insertUser")
+    @Operation(summary = "插入新用户")
     public ResponseEntity<?> insertUser(@RequestBody RegisterRequest request) {
         User user = User.builder()
                 .userPhone(request.getUserPhone())
@@ -71,16 +69,14 @@ public class AdminController {
     }
 
     @PostMapping("/updateUser")                 //  更新用户信息
-    public R updateUser(@RequestBody User user) {
-        UserRole userRole = new UserRole();     //  new对象
-        userRole.setUserId(user.getUserId());   //  赋值到userRole中
-        userRole.setRoleId(user.getIdentity()); //  将前端修改的身份赋值到userRole中作为他的权限
-        userRoleService.updateUserRole(userRole);   //  修改用户权限
-
+    @Operation(summary = "更新用户信息")
+    public R updateUser(@RequestBody UserDTO user) {
+        userRoleService.updateUserRole(UserRole.builder().userId(user.getUserId()).roleId(user.getRoleId()).build());
         return userService.updateUser(user);   //  修改用户其他信息
     }
 
     @DeleteMapping("/deleteUser/{userId}")      //  根据用户id删除用户
+    @Operation(summary = "根据用户Id删除用户")
     @RateLimit(maxRequests = 10)
     public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
         List<Integer> videoAlbumIds = videoAlbumMapper.findAlbumIdsByUserId(userId);
@@ -96,6 +92,7 @@ public class AdminController {
     }
 
     @PostMapping("/videos")                 //  根据条件获取视频
+    @Operation(summary = "根据条件获取视频")
     public ResponseEntity<?> getVideos(@RequestBody Video video) {
         List<Video> videos = videoService.findVideos(video);
         if (!videos.isEmpty()) {
@@ -106,6 +103,7 @@ public class AdminController {
     }
 
     @PostMapping("/updateVideo")            //  更新视频审核状态
+    @Operation(summary = "更新视频")
     public ResponseEntity<?> updateVideo(@RequestBody Video video) {
         video.setVideoPath(null);
         video.setThumbnailPath(null);
@@ -118,6 +116,7 @@ public class AdminController {
     }
 
     @PostMapping("/Albums")
+    @Operation(summary = "根据条件获取专辑")
     public ResponseEntity<?> getAlbums(@RequestBody VideoAlbum videoAlbum) {
         List<VideoAlbum> videoAlbumList = videoAlbumService.getVideoAlbums(videoAlbum);
         if (!videoAlbumList.isEmpty()) {
@@ -128,6 +127,7 @@ public class AdminController {
     }
 
     @PostMapping("/updateAlbum")
+    @Operation(summary = "更新专辑")
     public ResponseEntity<?> updateAlbum(@RequestBody VideoAlbum videoAlbum) {
         //  禁止设置海报的路径
         videoAlbum.setVideoPostPath(null);

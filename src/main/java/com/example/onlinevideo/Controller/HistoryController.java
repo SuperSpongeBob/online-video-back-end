@@ -3,12 +3,14 @@ package com.example.onlinevideo.Controller;
 import com.example.onlinevideo.Annotation.CheckOwnership;
 import com.example.onlinevideo.Entity.History;
 import com.example.onlinevideo.Service.HistoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "观看历史")
 @RestController
 @RequestMapping("/api")
 public class HistoryController {

@@ -3,20 +3,25 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.onlinevideo.Mapper.UserMapper">
-    <select id="getUsers" resultType="com.example.onlinevideo.Entity.User">
-        select user_id,user_name,user_gender,user_phone,user_email,user_add_time
-        from user
+
+    <select id="getUsers" resultType="com.example.onlinevideo.DTO.UserDTO">
+        select u.user_id, u.user_name, u.user_gender,u.user_phone,u.user_email,u.user_add_time, ur.role_id
+        from user u
+        LEFT JOIN user_role ur ON u.user_id = ur.user_id
         <where>
-            <if test="user.userId!=null and user.userId!=''">and user_id=#{user.userId}</if>
-            <if test="user.userName!=null and user.userName!=''">and user_name like "%${user.userName}%"</if>
-            <if test="user.userGender!=null and user.userGender!=''">and user_gender=#{user.userGender}</if>
-            <if test="user.userPhone!=null and user.userPhone!=''">and user_phone like "%${user.userPhone}%"</if>
-            <if test="user.userEmail!=null and user.userEmail!=''">and user_email like "%${user.userEmail}%"</if>
-            <if test="startTime!=null">and user_add_time >= #{startTime}</if>
-            <if test="endTime!=null">and user_add_time &lt;= #{endTime}</if>
+            <if test="user.userId!=null and user.userId!=''">and u.user_id=#{user.userId}</if>
+            <if test="user.userName!=null and user.userName!=''">and u.user_name like "%"#{user.userName}"%"</if>
+            <if test="user.userGender!=null and user.userGender!=''">and u.user_gender=#{user.userGender}</if>
+            <if test="user.userPhone!=null and user.userPhone!=''">and u.user_phone like "%"#{user.userPhone}"%"</if>
+            <if test="user.userEmail!=null and user.userEmail!=''">and u.user_email like "%"#{user.userEmail}"%"</if>
+            <if test="startTime!=null">and u.user_add_time >= #{startTime}</if>
+            <if test="endTime!=null">and u.user_add_time &lt;= #{endTime}
+            </if>
         </where>
-        order by user_id desc
-        <if test="user.pageNum!=null and user.pageSize!=null">LIMIT #{user.pageNum},#{user.pageSize}</if>
+        order by u.user_id desc
+        <if test="user.pageNum!=null and user.pageSize!=null">
+            LIMIT #{user.pageNum},#{user.pageSize}
+        </if>
     </select>
 
     <select id="getUserByUserPhone" parameterType="com.example.onlinevideo.Entity.User">
@@ -106,7 +111,7 @@
         where user_id = #{userId}
     </update>
 
-    <update id="updateUserPassword" parameterType="com.example.onlinevideo.Entity.User">
+    <update id="updateUserPassword" parameterType="com.example.onlinevideo.DTO.UserDTO">
         update user
         set user_password=#{userNewPassword}
         where user_id = #{userId}
