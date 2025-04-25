@@ -1,14 +1,15 @@
 package com.example.onlinevideo.Controller;
 
-import com.example.onlinevideo.Annotation.CheckOwnership;
 import com.example.onlinevideo.Entity.Danmaku;
 import com.example.onlinevideo.Service.DanmakuService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "弹幕接口")
 @RestController
 @RequestMapping("/api")
 public class DanmakuController {

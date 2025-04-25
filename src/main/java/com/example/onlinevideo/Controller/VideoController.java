@@ -10,6 +10,7 @@ import com.example.onlinevideo.Service.VideoService;
 import com.example.onlinevideo.Vo.R;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "视频")
 @RestController
 @RequestMapping("/api")
 public class VideoController {

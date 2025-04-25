@@ -92,6 +92,7 @@ public class AdminController {
     }
 
     @PostMapping("/videos")                 //  根据条件获取视频
+    @Operation(summary = "根据条件获取视频")
     public ResponseEntity<?> getVideos(@RequestBody Video video) {
         List<Video> videos = videoService.findVideos(video);
         if (!videos.isEmpty()) {
@@ -102,6 +103,7 @@ public class AdminController {
     }
 
     @PostMapping("/updateVideo")            //  更新视频审核状态
+    @Operation(summary = "更新视频")
     public ResponseEntity<?> updateVideo(@RequestBody Video video) {
         video.setVideoPath(null);
         video.setThumbnailPath(null);
@@ -114,6 +116,7 @@ public class AdminController {
     }
 
     @PostMapping("/Albums")
+    @Operation(summary = "根据条件获取专辑")
     public ResponseEntity<?> getAlbums(@RequestBody VideoAlbum videoAlbum) {
         List<VideoAlbum> videoAlbumList = videoAlbumService.getVideoAlbums(videoAlbum);
         if (!videoAlbumList.isEmpty()) {
@@ -124,6 +127,7 @@ public class AdminController {
     }
 
     @PostMapping("/updateAlbum")
+    @Operation(summary = "更新专辑")
     public ResponseEntity<?> updateAlbum(@RequestBody VideoAlbum videoAlbum) {
         //  禁止设置海报的路径
         videoAlbum.setVideoPostPath(null);

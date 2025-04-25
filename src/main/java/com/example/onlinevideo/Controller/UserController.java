@@ -7,6 +7,7 @@ import com.example.onlinevideo.Entity.User;
 import com.example.onlinevideo.Security.JwtTokenProvider;
 import com.example.onlinevideo.Service.UserService;
 import com.example.onlinevideo.Vo.R;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "用户")
 @RestController
 @RequestMapping("/api")
 public class UserController {

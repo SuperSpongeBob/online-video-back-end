@@ -6,6 +6,7 @@ import com.example.onlinevideo.Entity.VideoAlbum;
 import com.example.onlinevideo.Service.VideoAlbumService;
 import com.example.onlinevideo.Service.VideoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+@Tag(name = "上传")
 @RestController
 @RequestMapping("/api")
 public class VideoUploadController {
