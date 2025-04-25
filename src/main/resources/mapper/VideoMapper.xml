@@ -150,8 +150,8 @@
         where video_id = #{videoId}
     </select>
 
-    <select id="SearchVideo" resultMap="VideoMap">
-        select v.* ,va.video_post_path
+    <select id="SearchVideo" resultType="com.example.onlinevideo.DTO.VideoDTO">
+        select v.*
         from video v
         join video_album va on v.video_album_id=va.video_album_id
         <where>
