@@ -156,6 +156,17 @@ public class VideoController {
         }
     }
 
+    @GetMapping("/videosByUserId")
+    @CheckOwnership(expression = "#userId")
+    public ResponseEntity<?> getVideosByUserId(@RequestParam(value = "userId") Integer userId) {
+        List<Video> videos = videoService.videosByUserId(userId);
+        if (!videos.isEmpty()) {
+            return ResponseEntity.ok(videos);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
     //根据id验证是否能观看视频     仅用于返回信息给用户，具体能否观看不受影响
     @GetMapping("/verify")
     public ResponseEntity<?> verifyVip(@RequestParam(value = "videoId") String videoId, HttpServletRequest request) {

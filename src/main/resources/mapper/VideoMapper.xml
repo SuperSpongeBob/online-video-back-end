@@ -144,6 +144,17 @@
         <if test="pageNum!=null and pageSize!=null">LIMIT #{pageNum},#{pageSize}</if>
     </select>
 
+    <select id="videosByUserId" resultType="com.example.onlinevideo.Entity.Video">
+        SELECT v.*
+        FROM video v
+        JOIN video_album va ON v.video_album_id = va.video_album_id
+        <where>
+            <if test="userId != null and userId!=''">
+                va.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
     <select id="findVideoByVideoId" resultType="com.example.onlinevideo.Entity.Video">
         select *
         from video
@@ -206,7 +217,7 @@
             <if test="videoName!=null and videoName!=''">video_name=#{videoName},</if>
             <if test="videoTitle!=null and videoTitle!=''">video_title=#{videoTitle},</if>
             <if test="videoPath!=null and videoPath!=''">video_path=#{videoPath},</if>
-            <if test="videoAlbumId!=null and videoAlbum!=''">video_album_id=#{videoAlbumId},</if>
+            <if test="videoAlbumId!=null and videoAlbumId!=''">video_album_id=#{videoAlbumId},</if>
             <if test="duration != null and duration !=''">duration=#{duration},</if>
             <if test="thumbnailPath!=null and thumbnailPath!=''">thumbnail_path=#{thumbnailPath},</if>
             <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">
@@ -263,13 +274,51 @@
         LIMIT #{limit}
     </select>
 
-    <!-- 按video_id逆序分页获取视频 -->
+    <!-- 按video_id逆序分页获取视频，排除已使用的视频 -->
     <select id="selectVideosOrderByIdDesc" resultType="com.example.onlinevideo.Entity.Video">
         SELECT *
         FROM video
-        where video_approval_status = "审核通过"
+        WHERE video_approval_status = "审核通过"
+        <!-- 动态添加NOT IN子句 -->
+        <if test="usedIds != null and usedIds.size() > 0">
+            AND video_id NOT IN
+            <foreach collection="usedIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
         ORDER BY video_id DESC
         LIMIT #{offset}, #{limit}
     </select>
+
+
+    <!-- 根据ID集合查询视频 -->
+    <select id="selectVideosByIds" resultType="com.example.onlinevideo.Entity.Video">
+        SELECT *
+        FROM video
+        WHERE video_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND video_approval_status = "审核通过"
+    </select>
+
+    <!-- 获取最新视频ID -->
+    <select id="selectNewestVideoIds" resultType="java.lang.Integer">
+        SELECT video_id
+        FROM video
+        WHERE video_approval_status = "审核通过"
+        ORDER BY video_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 获取最热视频ID -->
+    <select id="selectHottestVideoIds" resultType="java.lang.Integer">
+        SELECT video_id
+        FROM video
+        WHERE video_approval_status = "审核通过"
+        ORDER BY view_count DESC, video_id DESC
+        LIMIT #{limit}
+    </select>
+
 
 </mapper>

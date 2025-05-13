@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- 定义日志目录 -->
+    <property name="LOG_DIR" value="/var/log/online-video" />
+
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -7,7 +10,50 @@
         </encoder>
     </appender>
 
-    <!-- 安全日志单独文件 -->
+    <!-- 主应用日志 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 当前活跃日志文件（立即创建） -->
+        <file>${LOG_DIR}/application.log</file>
+
+        <!-- 滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 归档日志命名模式（凌晨滚动） -->
+            <fileNamePattern>${LOG_DIR}/application.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 保留30天日志 -->
+            <maxHistory>30</maxHistory>
+            <!-- 可选：单个日志文件最大大小 -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 日志级别配置 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+
+    <logger name="com.example.onlinevideo" level="DEBUG" />
+</configuration>
+
+
+
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    &lt;!&ndash; 控制台输出 &ndash;&gt;
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    &lt;!&ndash; 安全日志单独文件 &ndash;&gt;
     <appender name="SECURITY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/security.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -19,17 +65,17 @@
         </encoder>
     </appender>
 
-    <!-- Spring Security日志 -->
+    &lt;!&ndash; Spring Security日志 &ndash;&gt;
     <logger name="org.springframework.security" level="INFO" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="SECURITY_FILE"/>
     </logger>
 
-    <!-- 项目代码日志 -->
+    &lt;!&ndash; 项目代码日志 &ndash;&gt;
     <logger name="com.example.onlinevideo" level="INFO"/>
 
-    <!-- 根日志级别 -->
+    &lt;!&ndash; 根日志级别 &ndash;&gt;
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
-</configuration>
+</configuration>-->

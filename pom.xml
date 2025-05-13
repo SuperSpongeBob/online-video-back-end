@@ -150,6 +150,12 @@
             <version>2.5.0</version>
         </dependency>
 
+        <!-- log-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -166,6 +172,7 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                         </exclude>
+<!--                        <exclude>com/example/test/**/*.java</exclude>-->
                     </excludes>
                 </configuration>
             </plugin>

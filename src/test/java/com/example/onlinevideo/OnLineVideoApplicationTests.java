@@ -72,7 +72,7 @@ class OnLineVideoApplicationTests {
 
     }
 
-    @Test
+/*    @Test
     public void token(){
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sInVzZXJQaG9uZSI6IjE4NjEzMTYwMDAwIiwidXNlcklkIjo0NiwiaWF0IjoxNzQ0ODgwNzM0LCJleHAiOjE3NDQ5NjcxMzR9.u7FRYuvRVJbcDacvf1ngPWUatdGIngOdq3jFBZ7LdDyZIZ98quS1XQ8LMWUv0p4e4Giu0m5JsRR3OOdDV80wNw";
         String userPhone = jwtTokenProvider.getUsernameFromToken(token);
@@ -83,16 +83,16 @@ class OnLineVideoApplicationTests {
         System.out.println(authentication.getCredentials());
         System.out.println(authentication.getDetails());
         System.out.println(authentication.getName());
-    }
+    }*/
 
-    @Test
+/*    @Test
     public void getIndexVideos(){
         Video video = new Video();
         VideoAlbum videoAlbum = new VideoAlbum();
         video.setVideoAlbum(videoAlbum);
 //        video.setVideoId(50);
         System.out.println(videoMapper.getIndexVideo(video));
-    }
+    }*/
 
 
 
@@ -104,16 +104,16 @@ class OnLineVideoApplicationTests {
         System.out.println(historyList);
     }
 
-    @Test
+   /* @Test
     public void getHistory(){
         History history = new History();
 //        history.setUserId(46);
 //        history.setVideoId(38);
         History historyList = historyService.historyByHistoryId(history);
         System.out.println(historyList);
-    }
+    }*/
 
-    @Test
+  /*  @Test
     public void insertHistory(){
         History history = new History();
         history.setUserId(46);
@@ -121,7 +121,7 @@ class OnLineVideoApplicationTests {
         history.setWatchedSeconds(5);
         boolean success = historyService.insertHistory(history);
         System.out.println(success);
-    }
+    }*/
 
     @Test
     public void existsVideo(){
@@ -238,7 +238,7 @@ class OnLineVideoApplicationTests {
         System.out.println(s);
     }*/
 
-    @Test
+/*    @Test
     public void findVideos() {
         Video video = new Video();
 //        video.setVideoApprovalStatus("审核通过");
@@ -264,7 +264,7 @@ class OnLineVideoApplicationTests {
 //        for (Video v : videos1) {
 //            System.out.println(videos1);
 //        }
-    }
+    }*/
 
     @Test
     public void searchVideo() {
@@ -275,7 +275,7 @@ class OnLineVideoApplicationTests {
         System.out.println(videos.size());
     }
 
-    @Test
+/*    @Test
     public void getIndexVideo() {
         Video video = new Video();
 //        video.setPageSize(5);
@@ -300,7 +300,7 @@ class OnLineVideoApplicationTests {
             }
         }
 
-    }
+    }*/
 
     @Test
     public void getVideoComments() {

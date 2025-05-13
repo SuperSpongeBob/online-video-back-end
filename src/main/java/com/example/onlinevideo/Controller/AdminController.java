@@ -109,7 +109,7 @@ public class AdminController {
         video.setThumbnailPath(null);
         boolean aBoolean = videoService.updateVideo(video);
         if (aBoolean) {
-            return ResponseEntity.ok(video);
+            return ResponseEntity.ok(true);
         } else {
             return ResponseEntity.noContent().build();
         }

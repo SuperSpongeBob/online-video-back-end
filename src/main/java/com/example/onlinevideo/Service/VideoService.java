@@ -95,6 +95,10 @@ public class VideoService {
         return videoMapper.getIndexVideo(video);
     }
 
+    public List<Video> videosByUserId(Integer userId) {
+        return videoMapper.videosByUserId(userId);
+    }
+
 
     public List<Video> SearchVideo(Video video) {
         return videoMapper.SearchVideo(video);

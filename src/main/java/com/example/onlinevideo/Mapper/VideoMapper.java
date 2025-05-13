@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Mapper
 public interface VideoMapper {
@@ -27,6 +28,9 @@ public interface VideoMapper {
 
     //  分页查找所有视频信息
     List<Video> getIndexVideo(Video video);
+
+    //  根据用户id获取视频信息
+    List<Video> videosByUserId(Integer userId);
 
     //  根据id查找视频
     Optional<Video> findVideoByVideoId(Integer videoId);
@@ -55,5 +59,15 @@ public interface VideoMapper {
     //  推荐的视频搜索
     List<Video> selectNewestVideos(@Param("limit") int limit);
     List<Video> selectHottestVideos(@Param("limit") int limit);
-    List<Video> selectVideosOrderByIdDesc(@Param("offset") int offset, @Param("limit") int limit);
+    List<Video> selectVideosOrderByIdDesc(@Param("offset") int offset, @Param("limit") int limit ,@Param("usedIds") List<Integer> usedIds);
+    List<Video> selectVideosOrderByIdDescExclude(@Param("offset") int offset, @Param("limit") int limit,List<Integer> excludeIds);
+
+    // 新增：根据ID集合查询视频
+    List<Video> selectVideosByIds(@Param("ids") List<Integer> ids);
+
+    // 新增：获取最新视频ID
+    List<Integer> selectNewestVideoIds(@Param("limit") int limit);
+
+    // 新增：获取最热视频ID
+    List<Integer> selectHottestVideoIds(@Param("limit") int limit);
 }

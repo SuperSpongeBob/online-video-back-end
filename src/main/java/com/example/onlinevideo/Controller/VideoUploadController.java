@@ -5,8 +5,11 @@ import com.example.onlinevideo.Entity.Video;
 import com.example.onlinevideo.Entity.VideoAlbum;
 import com.example.onlinevideo.Service.VideoAlbumService;
 import com.example.onlinevideo.Service.VideoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +31,9 @@ public class VideoUploadController {
 
     private final Environment environment;
 
-//    @Value("${video.upload-dir}")
+    //    @Value("${video.upload-dir}")
     private String videoUploadDir;
-//    @Value("${image.upload-dir}")
+    //    @Value("${image.upload-dir}")
     private String imageUploadDir;
 
     @Autowired
@@ -39,6 +42,8 @@ public class VideoUploadController {
         this.videoUploadDir = environment.getProperty("video.upload-dir");
         this.imageUploadDir = environment.getProperty("image.upload-dir");
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(VideoUploadController.class);
 
     @PostMapping("/upload")
     @RateLimit(maxRequests = 10)  // 一分钟只能上传十次，避免恶意上传
@@ -152,7 +157,11 @@ public class VideoUploadController {
             // 如果参数组合不合法，返回错误**
             return ResponseEntity.badRequest().body("无效的上传组合");
 
+        } catch (JsonProcessingException e) {
+            logger.error("JSON 解析失败", e);
+            return ResponseEntity.badRequest().body("无效的 JSON 格式");
         } catch (Exception e) {
+            logger.error("上传过程中发生错误",e);
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("上传过程中发生错误");
         }
@@ -160,12 +169,13 @@ public class VideoUploadController {
 
     /**
      * 获取视频的时长，单位秒
+     *
      * @param videoFile
      * @return
      * @throws IOException
      * @throws InterruptedException
      */
-    private Integer getVideoDuration(File videoFile) throws IOException ,InterruptedException{
+    private Integer getVideoDuration(File videoFile) throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder("ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", videoFile.getAbsolutePath());
         Process process = processBuilder.start();
         process.waitFor();
