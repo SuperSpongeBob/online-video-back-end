@@ -8,6 +8,7 @@ import com.example.onlinevideo.Service.VideoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Tag(name = "上传")
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class VideoUploadController {
@@ -158,11 +160,11 @@ public class VideoUploadController {
             return ResponseEntity.badRequest().body("无效的上传组合");
 
         } catch (JsonProcessingException e) {
-            logger.error("JSON 解析失败", e);
+            log.error("JSON解析失败{}", e.getMessage());
             return ResponseEntity.badRequest().body("无效的 JSON 格式");
         } catch (Exception e) {
-            logger.error("上传过程中发生错误",e);
-            e.printStackTrace();
+            log.error("上传过程发生错误",e);
+//            e.printStackTrace();
             return ResponseEntity.internalServerError().body("上传过程中发生错误");
         }
     }

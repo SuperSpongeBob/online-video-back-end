@@ -13,6 +13,7 @@ import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @Tag(name = "视频")
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class VideoController {
@@ -71,6 +73,7 @@ public class VideoController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
+            log.error("删除视频异常",e.getMessage());
             e.printStackTrace();
         }
         return ResponseEntity.notFound().build();
@@ -101,6 +104,7 @@ public class VideoController {
             List<Video> videos = videoService.SearchVideo(video);
             return new ResponseEntity<>(videos, HttpStatus.OK);
         } catch (Exception e) {
+            log.error("搜索视频异常",e.getMessage());
             e.printStackTrace();
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -7,6 +7,9 @@ import com.example.onlinevideo.Entity.Danmaku;
 import com.example.onlinevideo.Entity.Video;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class VideoService {
 
+    private static final Logger log = LoggerFactory.getLogger(VideoService.class);
     @Autowired
     private VideoMapper videoMapper;
     @Autowired
@@ -110,7 +114,7 @@ public class VideoService {
     }
 
     //  admin更新视频信息、审核视频
-//    @Transactional
+    @Transactional
     public boolean updateVideo(Video video) {
         return videoMapper.updateVideo(video);
     }
@@ -125,6 +129,7 @@ public class VideoService {
                 fileService.deleteImagesFile(video.get().getThumbnailPath());
                 boolean isDeleted = fileService.deleteVideoFile(video.get().getVideoPath());
                 if (!isDeleted) {
+                    log.error("视频文件删除失败", video.get().getVideoPath());
                     System.out.println("文件删除失败或文件不存在");
                 }
                 //  删除该视频下的弹幕
@@ -147,6 +152,7 @@ public class VideoService {
         if (video.isPresent()) {
             boolean isDeleted = fileService.deleteImagesFile(video.get().getThumbnailPath());
             if (!isDeleted) {
+                log.error("缩略图删除失败", video.get().getThumbnailPath());
                 System.out.println("缩略图删除失败或文件不存在");
             }
         }

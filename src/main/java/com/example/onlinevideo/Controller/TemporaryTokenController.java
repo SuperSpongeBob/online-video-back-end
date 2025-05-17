@@ -22,7 +22,7 @@ public class TemporaryTokenController {
     private final JwtTokenProvider jwtTokenProvider;
     @Value("${jwt.secret}")
     private String SECRET_KEY ;
-    private static final long EXPIRATION_TIME = 5*60 * 1000; // 临时 token 有效期 5 分钟
+    private static final long EXPIRATION_TIME = 120*60 * 1000; // 临时 token 有效期 120 分钟
 
     public TemporaryTokenController(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;

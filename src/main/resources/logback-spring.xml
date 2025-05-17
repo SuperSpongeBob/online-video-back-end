@@ -1,81 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!-- 定义日志目录 -->
-    <property name="LOG_DIR" value="/var/log/online-video" />
+    <!-- 定义变量 -->
+    <property name="LOG_PATH" value="/var/log/online-video" />
+    <property name="CONSOLE_LOG_PATH" value="${LOG_PATH}/console" />
+    <property name="APP_NAME" value="online-video" />
 
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- 主应用日志 -->
+    <!-- 应用程序日志文件 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 当前活跃日志文件（立即创建） -->
-        <file>${LOG_DIR}/application.log</file>
-
-        <!-- 滚动策略 -->
+        <file>${LOG_PATH}/${APP_NAME}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 归档日志命名模式（凌晨滚动） -->
-            <fileNamePattern>${LOG_DIR}/application.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <!-- 保留30天日志 -->
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>30</maxHistory>
-            <!-- 可选：单个日志文件最大大小 -->
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- 日志级别配置 -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-    </root>
-
-    <logger name="com.example.onlinevideo" level="DEBUG" />
-</configuration>
-
-
-
-<!--
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    &lt;!&ndash; 控制台输出 &ndash;&gt;
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    &lt;!&ndash; 安全日志单独文件 &ndash;&gt;
-    <appender name="SECURITY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/security.log</file>
+    <!-- 控制台输出日志文件 -->
+    <appender name="CONSOLE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${CONSOLE_LOG_PATH}/console.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/security.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${CONSOLE_LOG_PATH}/console-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    &lt;!&ndash; Spring Security日志 &ndash;&gt;
-    <logger name="org.springframework.security" level="INFO" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="SECURITY_FILE"/>
-    </logger>
-
-    &lt;!&ndash; 项目代码日志 &ndash;&gt;
-    <logger name="com.example.onlinevideo" level="INFO"/>
-
-    &lt;!&ndash; 根日志级别 &ndash;&gt;
+    <!-- 根日志级别 -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="CONSOLE_FILE" />
+        <appender-ref ref="CONSOLE" />
     </root>
-</configuration>-->
+
+    <!-- 应用程序日志 -->
+    <logger name="com.example.onlinevideo" level="INFO" additivity="false">
+        <appender-ref ref="FILE" />
+    </logger>
+</configuration>
