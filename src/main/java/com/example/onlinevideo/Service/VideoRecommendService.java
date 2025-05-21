@@ -110,8 +110,8 @@ public class VideoRecommendService {
     private void initRecommendPool() {
         // 获取最新20条视频ID
         List<Integer> newestVideoIds = videoMapper.selectNewestVideoIds(20);
-        // 获取最热20条视频ID
-        List<Integer> hottestVideoIds = videoMapper.selectHottestVideoIds(20);
+        // 获取最热40条视频ID
+        List<Integer> hottestVideoIds = videoMapper.selectHottestVideoIds(40);
 
         // 合并并去重
         Set<Integer> recommendIdPool = new LinkedHashSet<>();
