@@ -128,6 +128,7 @@ public class VideoService {
                 //  删除视频文件、缩略图
                 fileService.deleteImagesFile(video.get().getThumbnailPath());
                 boolean isDeleted = fileService.deleteVideoFile(video.get().getVideoPath());
+                fileService.deleteVideoFile("preview_" + video.get().getVideoPath());
                 if (!isDeleted) {
                     log.error("视频文件删除失败", video.get().getVideoPath());
                     System.out.println("文件删除失败或文件不存在");

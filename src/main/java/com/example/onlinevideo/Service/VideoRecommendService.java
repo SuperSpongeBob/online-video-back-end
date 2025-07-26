@@ -61,7 +61,7 @@ public class VideoRecommendService {
 
             // 记录已使用的视频ID
             if (!result.isEmpty()) {
-//                Set<Integer> usedIds = result.stream().map(Video::getVideoId).collect(Collectors.toSet());
+
                 usedVideoIds = result.stream().map(Video::getVideoId).collect(Collectors.toSet());
                 redisTemplate.opsForSet().add(USED_VIDEO_IDS_KEY_PREFIX + token, usedVideoIds.toArray());
                 // 设置过期时间为1小时
@@ -76,13 +76,7 @@ public class VideoRecommendService {
             }
         }
 
-        /*// 5. 如果推荐池不足，则从数据库按video_id逆序获取剩余视频
-        int remainingSize = size - result.size();
-        if (remainingSize > 0) {
-            List<Video> remainingVideos = videoMapper.selectVideosOrderByIdDesc(
-                    page * size, remainingSize);
-            result.addAll(remainingVideos);
-        }*/
+
         // 5. 如果推荐池不足，则从数据库按video_id逆序获取剩余视频
         int remainingSize = size - result.size();
         if (remainingSize > 0) {

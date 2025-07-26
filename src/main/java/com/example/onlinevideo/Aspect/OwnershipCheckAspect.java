@@ -7,6 +7,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;
@@ -26,6 +28,7 @@ import java.lang.reflect.Method;
 @Aspect
 @Component
 public class OwnershipCheckAspect {
+    private static final Logger log = LoggerFactory.getLogger(OwnershipCheckAspect.class);
     private final ExpressionParser expressionParser = new SpelExpressionParser();
     private final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
@@ -81,10 +84,12 @@ public class OwnershipCheckAspect {
                     .getValue(context, Integer.class);
 
             if (targetUserId == null) {
+                log.error("解析出的用户ID为null，请检查表达式: " + expressionStr);
                 throw new IllegalStateException("解析出的用户ID为null，请检查表达式: " + expressionStr);
             }
             return targetUserId;
         } catch (Exception e) {
+            log.error("解析表达式 '" + expressionStr + "' 失败: " + e.getMessage(), e);
             throw new IllegalStateException("解析表达式 '" + expressionStr + "' 失败: " + e.getMessage(), e);
         }
     }

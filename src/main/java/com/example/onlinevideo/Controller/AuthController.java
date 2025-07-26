@@ -25,6 +25,11 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final ForgetPasswordService forgetPasswordService;
 
+    @GetMapping("/test")
+    public String test(){
+        return "test ok";
+    }
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authMapper.login(loginRequest));

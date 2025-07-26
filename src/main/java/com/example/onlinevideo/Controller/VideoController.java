@@ -46,19 +46,46 @@ public class VideoController {
                                          @RequestParam(value = "token", required = false) String token) throws Exception {
         //  验证视频类型
         boolean isVip = videoService.verifyVideo(videoId, token);  //  false:可以观看  true：不可以观看
-        if (isVip) {
-            return ResponseEntity.status(403).body("Access denied");
-        }
 
         String videoPath = videoService.getVideoPathByVideoId(videoId);
         if (videoPath == null || videoPath.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+        String finalVideoPath;
+        String redirectPath="/videos/";
+
+        if (isVip) {
+            // 确保只添加一次"preview_"前缀
+            finalVideoPath = videoPath.startsWith("preview_") ? videoPath : "preview_" + videoPath;
+//            redirectPath = "/videos-preview/";
+        } else {
+            finalVideoPath = videoPath;
+//            redirectPath = "/videos/";
+        }
+
+        // 对视频路径进行 URL 编码
+        String encodedVideoPath = URLEncoder.encode(finalVideoPath, StandardCharsets.UTF_8);
+        response.setHeader("X-Accel-Redirect", redirectPath + encodedVideoPath);
+        response.setHeader("Content-Type", "video/mp4");
+
+        System.out.println(redirectPath + encodedVideoPath);
+        return ResponseEntity.ok().build();
+
+        /*if (isVip) {
+            String encodedVideoPath = URLEncoder.encode("preview_"+videoPath, StandardCharsets.UTF_8);
+            response.setHeader("X-Accel-Redirect", "/videos-preview/" + encodedVideoPath);
+            response.setHeader("Content-Type", "video/mp4");
+//            return ResponseEntity.status(403).body("Access denied");
+            System.out.println("preview_"+encodedVideoPath);
+            return ResponseEntity.ok().build();
+        }
+
         // 对视频路径进行 URL 编码
         String encodedVideoPath = URLEncoder.encode(videoPath, StandardCharsets.UTF_8);
         response.setHeader("X-Accel-Redirect", "/videos/" + encodedVideoPath);
         response.setHeader("Content-Type", "video/mp4");
-        return ResponseEntity.ok().build();
+        System.out.println("videos/" + encodedVideoPath);
+        return ResponseEntity.ok().build();*/
     }
 
     @DeleteMapping("/deleteVideo")

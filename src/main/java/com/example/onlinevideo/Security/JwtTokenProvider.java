@@ -36,7 +36,6 @@ public class JwtTokenProvider {
         claims.put("roles", roles);
         claims.put("userPhone", userDetails.getUsername());
         claims.put("userId",userDetails.getUserId());
-//        claims.put("sub", userDetails.getUsername());  // 手动存入 subject
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setClaims(claims)
@@ -45,7 +44,6 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
-
     // 解析Token剩余有效期
     public Duration getRemainingExpiration(String token) {
         Date expiration = Jwts.parserBuilder()
@@ -54,38 +52,28 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();
-
         return Duration.ofMillis(expiration.getTime() - System.currentTimeMillis());
     }
-
     // 从请求头提取Token
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-//        System.out.println("未能从请求中解析出有效的 Token，请求头信息: " + request.getHeader("Authorization"));
         return null;
     }
-
     /**
      * 从 token 中解析出userName
      * @param token
      * @return
      */
     public String getUsernameFromToken(String token) {
-//        return Jwts.parser()
-//                .setSigningKey(jwtSecret)
-//                .parseClaimsJws(token)
-//                .getBody()
-//                .getSubject();
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
         return claims.get("userPhone", String.class);
     }
-
     /**
      * 从 token 中解析出 authentication
      * @param token
@@ -106,7 +94,6 @@ public class JwtTokenProvider {
         }
         return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
-
     /**
      * 验证 token 是否有效
      * @param token

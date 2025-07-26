@@ -52,7 +52,7 @@ public class MailService {
                 break;
             } catch (Exception e) {
                 retries++;
-                //  指数退避策略
+                //  指数退避重试策略
                 try {
                     Thread.sleep((long) Math.pow(2, retries) * 1000); // 1s, 2s, 4s
                 } catch (InterruptedException ie) {
@@ -60,7 +60,7 @@ public class MailService {
                 }
 
                 if (retries == MAX_RETRIES) {
-                    //  这里可以采用备用渠道，如短信或APP推送等
+                    //  TODO 这里可以采用备用渠道，如短信或APP推送等
 
                     //  记录日志
                     log.error("Failed to send email after " + MAX_RETRIES + " retries: " + e.getMessage());

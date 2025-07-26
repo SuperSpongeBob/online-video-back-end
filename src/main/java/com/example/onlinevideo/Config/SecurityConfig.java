@@ -65,7 +65,8 @@ public class SecurityConfig {
                         "/api/existsVideo",
                         "/api/verify",
                         "/api/generate-temporary-token",
-                        "/api/static/video").permitAll()
+                        "/api/static/video",
+                        "/api/video/**").permitAll()
                 .anyRequest().authenticated());
 
         //  禁用角色前缀

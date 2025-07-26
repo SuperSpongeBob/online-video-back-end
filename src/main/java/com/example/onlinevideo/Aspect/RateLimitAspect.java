@@ -39,7 +39,6 @@ public class RateLimitAspect {
         if (!allowRequest) {
             throw new RateLimitException("请求过于频繁，请稍后再试");
         }
-
         return joinPoint.proceed();
     }
 
@@ -65,18 +64,11 @@ public class RateLimitAspect {
         if (authentication !=null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())){
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             String userId = userDetails.getUserId().toString();
-//            System.out.println("rate_limit:user:" + userId + ":path:" + path);
             return "rate_limit:user:"+userId+":path:"+path;
-
-            //  如果用登录名作为限流键
-//            String userPhone = (String) authentication.getName();     //  userPhone:这个项目用的是电话号码作为security的userName
-//            return "rate_limit:user:"+userPhone;
         }
 
         //  如果用户未登录，使用 IP + User-Agent +path 作为限流键
         String userAgent = request.getHeader("User-Agent");
-//        System.out.println("rate_limit:ip:" + request.getRemoteAddr() + ":ua:" + userAgent + ":path:" + path);
         return "rate_limit:ip:"+request.getRemoteAddr()+":ua:"+userAgent+":path:"+path;
-
     }
 }

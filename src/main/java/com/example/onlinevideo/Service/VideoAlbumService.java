@@ -51,6 +51,8 @@ public class VideoAlbumService {
                         System.out.println("删除： " + videoPath);
                         //  删除视频文件
                         fileService.deleteVideoFile(videoPath);
+                        //  删除预览视频
+                        fileService.deleteVideoFile("preview_"+videoPath);
                     }
                     //  根据videoId查询所有的缩略图文件路径
                     List<String> thumbnailPaths=videoMapper.getThumbnailPathsByVideoIds(videoIds);

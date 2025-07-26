@@ -15,9 +15,9 @@ public class CorsConfig{
         CorsConfiguration config = new CorsConfiguration();
 
         // 允许所有域名进行跨域调用
-//        config.addAllowedOriginPattern("*");
-        config.addAllowedOriginPattern("https://192.168.1.10");
-        config.addAllowedOriginPattern("http://192.168.1.10");
+        config.addAllowedOriginPattern("*");
+//        config.addAllowedOriginPattern("https://114.132.173.236");
+//        config.addAllowedOriginPattern("http://114.132.173.236");
 
         // 明确指定允许的来源
 //        config.setAllowedOrigins(Arrays.asList("http://192.168.137.1:5173","http://192.168.1.1:5173","http://192.168.35.1:5173","http://localhost:5173"));

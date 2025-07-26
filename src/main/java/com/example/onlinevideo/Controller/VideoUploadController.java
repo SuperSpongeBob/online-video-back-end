@@ -17,10 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.UUID;
 
+/**
+ * 该项目对数据的存储还是存在本地的
+ * 实际开发中可以存储到OSS（对象存储服务）中
+ */
 @Tag(name = "上传")
 @Slf4j
 @RestController
@@ -121,12 +127,47 @@ public class VideoUploadController {
 
                 // 保存视频文件
                 if (!videoFile.isEmpty()) {
-                    String videoFileName = UUID.randomUUID() + "_" + videoFile.getOriginalFilename();
+                    /*String videoFileName = UUID.randomUUID() + "_" + videoFile.getOriginalFilename();
                     File dest = new File(videoUploadDir, videoFileName);
-                    videoFile.transferTo(dest);
+                    videoFile.transferTo(dest);*/
+
+                    String originalFilename = videoFile.getOriginalFilename();
+                    String fileExtension = getFileExtension(originalFilename);
+                    boolean isMp4 = "mp4".equalsIgnoreCase(fileExtension);
+
+                    String videoFileName;
+                    File dest;
+
+                    // 如果不是MP4格式，先保存原始文件，然后进行转码
+                    if (!isMp4) {
+                        // 保存原始文件
+                        String originalVideoFileName = UUID.randomUUID() + "_original_" + originalFilename;
+                        File originalDest = new File(videoUploadDir, originalVideoFileName);
+                        videoFile.transferTo(originalDest);
+
+                        // 生成转码后的文件名
+                        String transcodedFileName = UUID.randomUUID() + "_transcoded.mp4";
+                        dest = new File(videoUploadDir, transcodedFileName);
+
+                        // 执行转码
+                        transcodeToMp4(originalDest, dest);
+                        videoFileName = transcodedFileName;
+
+                        // 转码完成后可以选择删除原始文件
+                        // originalDest.delete();
+                    } else {
+                        // 如果是MP4格式，直接保存
+                        videoFileName = UUID.randomUUID() + "_" + originalFilename;
+                        dest = new File(videoUploadDir, videoFileName);
+                        videoFile.transferTo(dest);
+                    }
+
                     videoObj.setVideoPath(videoFileName);
                     Integer duration = getVideoDuration(dest);      //  获取视频时长
                     videoObj.setDuration(duration);
+
+                    //  生成预览文件
+                    generateVideoPreview(dest);
 
                     // 处理海报（允许为 null）
                     if (imageFile != null && !imageFile.isEmpty()) {
@@ -170,6 +211,53 @@ public class VideoUploadController {
     }
 
     /**
+     * 生成视频预览方法
+     */
+    private String generateVideoPreview(File sourceVideo) {
+        try {
+            // 构建预览文件名："preview_" + 原文件名
+            String previewFileName = "preview_" + sourceVideo.getName();
+            File previewFile = new File(sourceVideo.getParentFile(), previewFileName);
+
+            // 构建FFmpeg命令
+            ProcessBuilder pb = new ProcessBuilder(
+                    "ffmpeg",
+                    "-i", sourceVideo.getAbsolutePath(),
+                    "-t", "30",  // 截取前30秒
+                    "-c:v", "copy",  // 直接复制视频流，不重新编码
+                    "-c:a", "copy",  // 直接复制音频流，不重新编码
+                    "-avoid_negative_ts", "1",
+                    previewFile.getAbsolutePath()
+            );
+
+            // 设置错误输出重定向
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            // 读取输出信息
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                log.debug("FFmpeg: {}", line);
+            }
+
+            // 等待进程完成
+            int exitCode = process.waitFor();
+            if (exitCode == 0 && previewFile.exists()) {
+                log.info("成功生成预览视频: {}", previewFile.getAbsolutePath());
+                return previewFileName;
+            } else {
+                log.error("生成预览视频失败，退出码: {}", exitCode);
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("生成预览视频时出错", e);
+            return null;
+        }
+    }
+
+
+    /**
      * 获取视频的时长，单位秒
      *
      * @param videoFile
@@ -178,12 +266,85 @@ public class VideoUploadController {
      * @throws InterruptedException
      */
     private Integer getVideoDuration(File videoFile) throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder("ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", videoFile.getAbsolutePath());
+        ProcessBuilder processBuilder = new ProcessBuilder("ffprobe", "-v", "error", "-show_entries",
+                "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", videoFile.getAbsolutePath());
         Process process = processBuilder.start();
         process.waitFor();
         String output = new String(process.getInputStream().readAllBytes());
         double durationInSeconds = Double.parseDouble(output.trim());
         return (int) Math.round(durationInSeconds);
+    }
+    /**
+     * 转码视频到MP4格式
+     * @param sourceFile 源视频文件
+     * @param targetFile 目标MP4文件
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private void transcodeToMp4(File sourceFile, File targetFile) throws IOException, InterruptedException {
+        log.info("开始转码视频: {}", sourceFile.getName());
+
+        // 使用ffmpeg进行转码，采用libx264编码和aac音频
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "ffmpeg", "-i", sourceFile.getAbsolutePath(),
+                "-c:v", "libx264", "-preset", "medium", "-crf", "23",
+                "-c:a", "aac", "-b:a", "128k",
+                "-strict", "experimental",
+                "-threads", "0", // 自动使用可用线程
+                "-y", // 覆盖已存在文件
+                targetFile.getAbsolutePath()
+        );
+        Process process = processBuilder.start();
+        // 读取错误输出
+        Thread errorReader = new Thread(() -> {
+            try {
+                java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(process.getErrorStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    log.debug("ffmpeg: {}", line);
+                }
+            } catch (IOException e) {
+                log.error("读取ffmpeg错误输出时出错", e);
+            }
+        });
+        errorReader.start();
+
+        // 读取标准输出
+        Thread outputReader = new Thread(() -> {
+            try {
+                java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    log.debug("ffmpeg: {}", line);
+                }
+            } catch (IOException e) {
+                log.error("读取ffmpeg标准输出时出错", e);
+            }
+        });
+        outputReader.start();
+
+        int exitCode = process.waitFor();
+        errorReader.join();
+        outputReader.join();
+
+        if (exitCode != 0) {
+            throw new IOException("视频转码失败，退出码: " + exitCode);
+        }
+
+        log.info("视频转码完成: {}", targetFile.getName());
+    }
+
+    /**
+     * 获取文件扩展名
+     */
+    private String getFileExtension(String fileName) {
+        if (fileName == null) {
+            return "";
+        }
+        int lastIndex = fileName.lastIndexOf('.');
+        return lastIndex >= 0 ? fileName.substring(lastIndex + 1) : "";
     }
 
 

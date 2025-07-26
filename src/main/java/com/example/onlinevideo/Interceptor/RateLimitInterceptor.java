@@ -55,7 +55,6 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         if (authentication !=null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())){
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             String userId = userDetails.getUserId().toString();
-//            System.out.println("rate_limit:user:"+userId);
             return "Global_rate_limit:user:"+userId;
 
             //  如果用登录名作为限流键
