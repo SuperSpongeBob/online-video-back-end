@@ -2,6 +2,7 @@ package com.example.onlinevideo.Controller;
 
 import com.example.onlinevideo.Annotation.CheckOwnership;
 import com.example.onlinevideo.Annotation.RateLimit;
+import com.example.onlinevideo.DTO.VideoDTO;
 import com.example.onlinevideo.Entity.Video;
 import com.example.onlinevideo.Mapper.VideoMapper;
 import com.example.onlinevideo.Security.JwtTokenProvider;
@@ -152,7 +153,7 @@ public class VideoController {
 
     //  根据视频播放量和最新视频进行推荐
     @GetMapping("/recommendVideos")
-    public ResponseEntity<List<Video>> recommendVideo(@RequestParam(defaultValue = "1") int page,
+    public ResponseEntity<List<VideoDTO>> recommendVideo(@RequestParam(defaultValue = "1") int page,
                                                       @RequestParam(defaultValue = "10") int size,
                                                       HttpServletRequest request) {
         // 获取token
@@ -167,7 +168,7 @@ public class VideoController {
             videoRecommendService.resetRecommendPool(token);
         }
 
-        List<Video> videos = videoRecommendService.getRecommendVideos(page - 1, size, token);
+        List<VideoDTO> videos = videoRecommendService.getRecommendVideos(page - 1, size, token);
 
         if (!videos.isEmpty()) {
             return ResponseEntity.ok(videos);

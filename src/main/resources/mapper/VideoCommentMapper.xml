@@ -14,8 +14,8 @@
     </select>
 
     <insert id="addVideoComment" parameterType="com.example.onlinevideo.Entity.VideoComment">
-        insert into comment (video_comment_content,video_comment_time,user_id,video_id)
-        values (#{Comment.videoCommentContent},#{Comment.videoCommentTime},#{Comment.userId},#{Comment.videoId})
+        insert into comment (video_comment_content,video_comment_time,user_id,video_id,parent_id,reply_to_id)
+        values (#{Comment.videoCommentContent},#{Comment.videoCommentTime},#{Comment.userId},#{Comment.videoId},#{Comment.parentId},#{Comment.replyToId})
     </insert>
 
     <delete id="deleteComment">
@@ -27,6 +27,37 @@
                 <when test="userId!=null and userId!=''">user_id = #{userId}</when>
             </choose>
         </where>
+    </delete>
+
+
+    <select id="getTopVideoComments" resultType="com.example.onlinevideo.Entity.VideoComment">
+        select comment.*,user.user_name from comment
+        JOIN user ON comment.user_id = user.user_id
+        where video_id = #{videoId}
+        and parent_id is null
+        order by video_comment_time desc
+        LIMIT #{pageNum}, #{pageSize}
+    </select>
+
+    <select id="getRepliesByParentId" resultType="com.example.onlinevideo.Entity.VideoComment">
+        select comment.*,user.user_name from comment
+        JOIN user ON comment.user_id = user.user_id
+        where parent_id=#{videoCommentId}
+        order by video_comment_time asc
+    </select>
+
+    <delete id="deleteCommentAndReplies">
+        WITH RECURSIVE comment_tree AS (
+            SELECT video_comment_id
+            FROM comment
+            WHERE video_comment_id = #{videoCommentId}
+            UNION ALL
+            SELECT c.video_comment_id
+            FROM comment c
+                     JOIN comment_tree ct ON c.parent_id = ct.video_comment_id
+        )
+        DELETE FROM comment
+        WHERE video_comment_id IN (SELECT video_comment_id FROM comment_tree);
     </delete>
 
 

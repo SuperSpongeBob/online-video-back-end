@@ -22,7 +22,9 @@ public class VideoCommentController {
     //根据视频Id获取评论
     @PostMapping("/videoComment")
     public ResponseEntity<?> getVideoComments(@RequestBody VideoComment videoComment) {
-        List<VideoComment> list = videoCommentService.getVideoCommentsByVideoId(videoComment);
+//        List<VideoComment> list = videoCommentService.getVideoCommentsByVideoId(videoComment);
+        System.out.println(videoComment);
+        List<VideoComment> list = videoCommentService.getVideoCommentsWithReplies(videoComment);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -35,6 +37,11 @@ public class VideoCommentController {
     @RateLimit(maxRequests = 30)
     @CheckOwnership(expression = "#videoComment.userId")
     public ResponseEntity<?> addVideoComment(@RequestBody VideoComment videoComment) {
+        // 校验必要参数
+        if (videoComment.getVideoId() == null || videoComment.getUserId() == null) {
+            return ResponseEntity.badRequest().body("缺少必要参数");
+        }
+
         Boolean state = videoCommentService.addVideoComment(videoComment);
         if (state) {
             return ResponseEntity.ok().body(true);
@@ -46,7 +53,8 @@ public class VideoCommentController {
     //  删除评论
     @PostMapping("/deleteComment")
     public ResponseEntity<?> deleteVideoComment(@RequestBody VideoComment videoComment) {
-        boolean result = videoCommentService.deleteComment(videoComment);
+//        boolean result = videoCommentService.deleteComment(videoComment);
+        boolean result = videoCommentService.deleteCommentWithReplies(videoComment.getVideoCommentId());
         if (result) {
             return ResponseEntity.ok().body(true);
         }

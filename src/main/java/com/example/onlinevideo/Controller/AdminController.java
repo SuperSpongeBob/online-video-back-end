@@ -38,10 +38,10 @@ public class AdminController {
 
     @PostMapping("/users")      //  获取用户信息
     @Operation(summary = "获取用户信息")
-    public ResponseEntity<?> getUsers(@RequestBody User user,
+    public ResponseEntity<?> getUsers(@RequestBody UserDTO userDTO,
                                       @RequestParam(required = false) Long startTime,
                                       @RequestParam(required = false) Long endTime) {
-        List<UserDTO> users = userService.getUsers(user, startTime, endTime);      //  获取user表中的所有用户信息
+        List<UserDTO> users = userService.getUsers(userDTO, startTime, endTime);      //  获取user表中的所有用户信息
         if (!users.isEmpty()) {
             return ResponseEntity.ok(users);
         } else {

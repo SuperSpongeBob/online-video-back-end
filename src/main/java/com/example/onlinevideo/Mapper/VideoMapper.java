@@ -1,5 +1,6 @@
 package com.example.onlinevideo.Mapper;
 
+import com.example.onlinevideo.DTO.VideoDTO;
 import com.example.onlinevideo.Entity.Video;
 import com.example.onlinevideo.Entity.VideoAlbum;
 import org.apache.ibatis.annotations.Mapper;
@@ -59,11 +60,11 @@ public interface VideoMapper {
     //  推荐的视频搜索
     List<Video> selectNewestVideos(@Param("limit") int limit);
     List<Video> selectHottestVideos(@Param("limit") int limit);
-    List<Video> selectVideosOrderByIdDesc(@Param("offset") int offset, @Param("limit") int limit ,@Param("usedIds") List<Integer> usedIds);
+    List<VideoDTO> selectVideosOrderByIdDesc(@Param("offset") int offset, @Param("limit") int limit ,@Param("usedIds") List<Integer> usedIds);
     List<Video> selectVideosOrderByIdDescExclude(@Param("offset") int offset, @Param("limit") int limit,List<Integer> excludeIds);
 
     // 新增：根据ID集合查询视频
-    List<Video> selectVideosByIds(@Param("ids") List<Integer> ids);
+    List<VideoDTO> selectVideosByIds(@Param("ids") List<Integer> ids);
 
     // 新增：获取最新视频ID
     List<Integer> selectNewestVideoIds(@Param("limit") int limit);

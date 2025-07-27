@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserMapper {
     //  用于admin的获取用户信息，按条件获取
 //    List<User> getUsers(User user,Long startTime,Long endTime);
-    List<UserDTO> getUsers(User user,Long startTime,Long endTime);
+    List<UserDTO> getUsers(UserDTO userDTO,Long startTime,Long endTime);
     List<Role> findRolesByUserId(Integer userId);
 
     //  根据用户手机号获取用户信息

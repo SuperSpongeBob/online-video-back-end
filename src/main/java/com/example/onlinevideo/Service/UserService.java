@@ -30,8 +30,8 @@ public class UserService {
     private UserRoleService userRoleService;
 
     //  获取用户信息
-    public List<UserDTO> getUsers(User user, Long startTime, Long endTime) {
-        return userMapper.getUsers(user, startTime, endTime);
+    public List<UserDTO> getUsers(UserDTO userDTO, Long startTime, Long endTime) {
+        return userMapper.getUsers(userDTO, startTime, endTime);
     }
 
     //  验证手机号是否已经存在

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserDTO extends Page{
     private Integer userId;
     private String userName;
     private String userPassword;

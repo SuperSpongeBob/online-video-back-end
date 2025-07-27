@@ -9,18 +9,19 @@
         from user u
         LEFT JOIN user_role ur ON u.user_id = ur.user_id
         <where>
-            <if test="user.userId!=null and user.userId!=''">and u.user_id=#{user.userId}</if>
-            <if test="user.userName!=null and user.userName!=''">and u.user_name like "%"#{user.userName}"%"</if>
-            <if test="user.userGender!=null and user.userGender!=''">and u.user_gender=#{user.userGender}</if>
-            <if test="user.userPhone!=null and user.userPhone!=''">and u.user_phone like "%"#{user.userPhone}"%"</if>
-            <if test="user.userEmail!=null and user.userEmail!=''">and u.user_email like "%"#{user.userEmail}"%"</if>
+            <if test="userDTO.userId!=null and userDTO.userId!=''">and u.user_id=#{userDTO.userId}</if>
+            <if test="userDTO.userName!=null and userDTO.userName!=''">and u.user_name like "%"#{userDTO.userName}"%"</if>
+            <if test="userDTO.userGender!=null and userDTO.userGender!=''">and u.user_gender=#{userDTO.userGender}</if>
+            <if test="userDTO.userPhone!=null and userDTO.userPhone!=''">and u.user_phone like "%"#{userDTO.userPhone}"%"</if>
+            <if test="userDTO.userEmail!=null and userDTO.userEmail!=''">and u.user_email like "%"#{userDTO.userEmail}"%"</if>
+            <if test="userDTO.roleId!=null and userDTO.roleId!=''">and ur.role_id=#{userDTO.roleId}</if>
             <if test="startTime!=null">and u.user_add_time >= #{startTime}</if>
             <if test="endTime!=null">and u.user_add_time &lt;= #{endTime}
             </if>
         </where>
         order by u.user_id desc
-        <if test="user.pageNum!=null and user.pageSize!=null">
-            LIMIT #{user.pageNum},#{user.pageSize}
+        <if test="userDTO.pageNum!=null and userDTO.pageSize!=null">
+            LIMIT #{userDTO.pageNum},#{userDTO.pageSize}
         </if>
     </select>
 

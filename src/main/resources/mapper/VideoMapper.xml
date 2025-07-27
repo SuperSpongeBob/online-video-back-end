@@ -128,10 +128,10 @@
         <if test="pageNum!=null and pageSize!=null">LIMIT #{pageNum},#{pageSize}</if>
     </select>
 
-    <select id="getIndexVideo" resultType="com.example.onlinevideo.Entity.Video">
-        select v.*
+    <select id="getIndexVideo" resultType="com.example.onlinevideo.DTO.VideoDTO">
+        select v.*,va.video_channel
         from video v
-
+        join video_album va on v.video_album_id=va.video_album_id
         <where>
             <if test="videoId!=null and videoId!=''">and video_id=#{videoId}</if>
             <if test="videoName!=null and videoName!=''">and video_name like "%${videoName}%"</if>
@@ -162,7 +162,7 @@
     </select>
 
     <select id="SearchVideo" resultType="com.example.onlinevideo.DTO.VideoDTO">
-        select v.*
+        select v.*,va.video_channel
         from video v
         join video_album va on v.video_album_id=va.video_album_id
         <where>
@@ -275,9 +275,9 @@
     </select>
 
     <!-- 按video_id逆序分页获取视频，排除已使用的视频 -->
-    <select id="selectVideosOrderByIdDesc" resultType="com.example.onlinevideo.Entity.Video">
-        SELECT *
-        FROM video
+    <select id="selectVideosOrderByIdDesc" resultType="com.example.onlinevideo.DTO.VideoDTO">
+        SELECT video.*,va.video_channel FROM video
+        join video_album va on video.video_album_id=va.video_album_id
         WHERE video_approval_status = "审核通过"
         <!-- 动态添加NOT IN子句 -->
         <if test="usedIds != null and usedIds.size() > 0">
@@ -292,9 +292,10 @@
 
 
     <!-- 根据ID集合查询视频 -->
-    <select id="selectVideosByIds" resultType="com.example.onlinevideo.Entity.Video">
-        SELECT *
+    <select id="selectVideosByIds" resultType="com.example.onlinevideo.DTO.VideoDTO">
+        SELECT video.*,va.video_channel
         FROM video
+        join video_album va on video.video_album_id=va.video_album_id
         WHERE video_id IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}

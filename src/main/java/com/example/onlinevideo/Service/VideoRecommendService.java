@@ -1,5 +1,6 @@
 package com.example.onlinevideo.Service;
 
+import com.example.onlinevideo.DTO.VideoDTO;
 import com.example.onlinevideo.Entity.Video;
 import com.example.onlinevideo.Mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class VideoRecommendService {
     private static final int RECOMMEND_POOL_SIZE = 40; // 最新20条+最热20条
 
     // 获取推荐视频
-    public List<Video> getRecommendVideos(int page, int size, String token) {
+    public List<VideoDTO> getRecommendVideos(int page, int size, String token) {
         // 1. 检查推荐池是否存在，不存在则初始化
         if (!redisTemplate.hasKey(RECOMMEND_VIDEO_IDS_KEY)) {
             initRecommendPool();
@@ -50,7 +51,7 @@ public class VideoRecommendService {
         }
 
         // 4. 如果推荐池中还有未使用的视频ID，则获取视频详情
-        List<Video> result = new ArrayList<>();
+        List<VideoDTO> result = new ArrayList<>();
         if (!availableVideoIds.isEmpty()) {
             // 打乱顺序
             List<Integer> shuffledIds = new ArrayList<>(availableVideoIds);
@@ -62,7 +63,7 @@ public class VideoRecommendService {
             // 记录已使用的视频ID
             if (!result.isEmpty()) {
 
-                usedVideoIds = result.stream().map(Video::getVideoId).collect(Collectors.toSet());
+                usedVideoIds = result.stream().map(VideoDTO::getVideoId).collect(Collectors.toSet());
                 redisTemplate.opsForSet().add(USED_VIDEO_IDS_KEY_PREFIX + token, usedVideoIds.toArray());
                 // 设置过期时间为1小时
                 redisTemplate.expire(USED_VIDEO_IDS_KEY_PREFIX + token, 1, TimeUnit.HOURS);
@@ -82,13 +83,13 @@ public class VideoRecommendService {
         if (remainingSize > 0) {
             // 获取已使用的视频ID集合
             List<Integer> usedIds = usedVideoIds.stream().map(Object::toString).map(Integer::parseInt).collect(Collectors.toList());
-            List<Video> remainingVideos = videoMapper.selectVideosOrderByIdDesc(
+            List<VideoDTO> remainingVideos = videoMapper.selectVideosOrderByIdDesc(
                     page * size, remainingSize, usedIds);
             result.addAll(remainingVideos);
 
             // 记录已使用的视频ID
             if (!result.isEmpty()) {
-                Set<Integer> usedIds1 = result.stream().map(Video::getVideoId).collect(Collectors.toSet());
+                Set<Integer> usedIds1 = result.stream().map(VideoDTO::getVideoId).collect(Collectors.toSet());
                 redisTemplate.opsForSet().add(USED_VIDEO_IDS_KEY_PREFIX + token, usedIds1.toArray());
                 // 设置过期时间为1小时
                 redisTemplate.expire(USED_VIDEO_IDS_KEY_PREFIX + token, 1, TimeUnit.HOURS);
