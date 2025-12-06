@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "评论")
 @Controller
@@ -44,7 +46,11 @@ public class VideoCommentController {
 
         Boolean state = videoCommentService.addVideoComment(videoComment);
         if (state) {
-            return ResponseEntity.ok().body(true);
+            //  返回包含videoCommentId的响应
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("videoCommentId", videoComment.getVideoCommentId());
+            return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.badRequest().build();
         }

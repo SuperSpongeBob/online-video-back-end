@@ -1,5 +1,6 @@
 package com.example.onlinevideo.Service;
 
+import com.example.onlinevideo.DTO.VideoDTO;
 import com.example.onlinevideo.Entity.VideoComment;
 import com.example.onlinevideo.Mapper.UserMapper;
 import com.example.onlinevideo.Mapper.VideoMapper;
@@ -85,7 +86,11 @@ public class VideoService {
     //集成于根据id、name、status、page分页查找
     public List<Video> findVideos(Video video) {
         return videoMapper.findVideos(video);
+    }
 
+    //  根据专辑Id查找视频
+    public List<VideoDTO> videosInSameAlbum(Integer videoId){
+        return videoMapper.videosInSameAlbum(videoId);
     }
 
     //根据id查找视频

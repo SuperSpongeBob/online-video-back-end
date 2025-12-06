@@ -15,4 +15,5 @@ public class VideoDTO {
     private String thumbnailPath;
     private Integer videoIsVip;
     private String videoChannel;
+    private String VideoAlbumName;
 }

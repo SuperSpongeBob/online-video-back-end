@@ -1,6 +1,7 @@
 package com.example.onlinevideo;
 
 import com.example.onlinevideo.Controller.VideoAlbumController;
+import com.example.onlinevideo.DTO.VideoDTO;
 import com.example.onlinevideo.Mapper.*;
 import com.example.onlinevideo.Entity.*;
 import com.example.onlinevideo.Security.CustomUserDetails;
@@ -54,25 +55,32 @@ class OnLineVideoApplicationTests {
 
     @Value("${jwt.secret}")
     private String SECRET_KEY;
+
+    @Test
+    void videoByAlbumId(){
+    List<VideoDTO> videoDTOList = videoService.videosInSameAlbum(48);
+        System.out.println(videoDTOList);
+    }
+
     @Test
     public void deleteAlbum(){
-//        Optional<VideoAlbum> album = videoAlbumMapper.getAlbumByVideoAlbumId(21);
-//        if(album.isPresent()){
-//            System.out.println(album);
-//        }
-//        List<Integer> videoIds = videoMapper.getVideoIdsByAlbumId(25);
-//        System.out.println(videoIds);
-//        List<String> videoPaths = videoMapper.getVideoPathsByVideoIds(videoIds);
-//        System.out.println(videoPaths);
-//        List<String> thumbnailPaths = videoMapper.getThumbnailPathsByVideoIds(videoIds);
-//        System.out.println(thumbnailPaths);
-//        List<Integer> userIds = Arrays.asList(46, 47, 48); // 假设查询多个用户的albumIds
+        Optional<VideoAlbum> album = videoAlbumMapper.getAlbumByVideoAlbumId(21);
+        if(album.isPresent()){
+            System.out.println(album);
+        }
+        List<Integer> videoIds = videoMapper.getVideoIdsByAlbumId(25);
+        System.out.println(videoIds);
+        List<String> videoPaths = videoMapper.getVideoPathsByVideoIds(videoIds);
+        System.out.println(videoPaths);
+        List<String> thumbnailPaths = videoMapper.getThumbnailPathsByVideoIds(videoIds);
+        System.out.println(thumbnailPaths);
+        List<Integer> userIds = Arrays.asList(46, 47, 48); // 假设查询多个用户的albumIds
         List<Integer> videoAlbumIds = videoAlbumMapper.findAlbumIdsByUserId(46);
         System.out.println(videoAlbumIds);
 
     }
 
-/*    @Test
+    @Test
     public void token(){
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sInVzZXJQaG9uZSI6IjE4NjEzMTYwMDAwIiwidXNlcklkIjo0NiwiaWF0IjoxNzQ0ODgwNzM0LCJleHAiOjE3NDQ5NjcxMzR9.u7FRYuvRVJbcDacvf1ngPWUatdGIngOdq3jFBZ7LdDyZIZ98quS1XQ8LMWUv0p4e4Giu0m5JsRR3OOdDV80wNw";
         String userPhone = jwtTokenProvider.getUsernameFromToken(token);
@@ -83,16 +91,16 @@ class OnLineVideoApplicationTests {
         System.out.println(authentication.getCredentials());
         System.out.println(authentication.getDetails());
         System.out.println(authentication.getName());
-    }*/
+    }
 
-/*    @Test
+    @Test
     public void getIndexVideos(){
         Video video = new Video();
         VideoAlbum videoAlbum = new VideoAlbum();
-        video.setVideoAlbum(videoAlbum);
+//        video.setVideoAlbum(videoAlbum);
 //        video.setVideoId(50);
         System.out.println(videoMapper.getIndexVideo(video));
-    }*/
+    }
 
 
 
@@ -104,16 +112,16 @@ class OnLineVideoApplicationTests {
         System.out.println(historyList);
     }
 
-   /* @Test
+    @Test
     public void getHistory(){
         History history = new History();
 //        history.setUserId(46);
 //        history.setVideoId(38);
         History historyList = historyService.historyByHistoryId(history);
         System.out.println(historyList);
-    }*/
+    }
 
-  /*  @Test
+    @Test
     public void insertHistory(){
         History history = new History();
         history.setUserId(46);
@@ -121,7 +129,7 @@ class OnLineVideoApplicationTests {
         history.setWatchedSeconds(5);
         boolean success = historyService.insertHistory(history);
         System.out.println(success);
-    }*/
+    }
 
     @Test
     public void existsVideo(){
@@ -167,23 +175,23 @@ class OnLineVideoApplicationTests {
         System.out.println(videoService.updateVideo(video));
     }
 
-/*    @Test
+    @Test
     public void updateUser() throws Exception {
         User user = new User();
 //        user.setUserIsVip(0);
 //        user.setUserCredibility("");
         user.setUserId(2);
-        System.out.println(userMapper.updateUser(user));
-    }*/
+//        System.out.println(userMapper.updateUser(user));
+    }
 
     @Test
     public void getUsers(){
         User user = new User();
         user.setUserId(2);
 //        user.setUserIsVip(1);
-//        user.setUserName("测试");
+        user.setUserName("测试");
 //        user.setUserNickname("test");
-//        user.setUserGender("男");
+        user.setUserGender("男");
 //        List<User> users=userService.getUsers(user);
 //        System.out.println(users);
     }
@@ -200,13 +208,13 @@ class OnLineVideoApplicationTests {
 
     @Test
     public void addVideoAlbum(){
-        /*VideoAlbum videoAlbum = new VideoAlbum();
+        VideoAlbum videoAlbum = new VideoAlbum();
         videoAlbum.setVideoAlbumName("视频专辑名");
 //        videoAlbum.setVideoAddUser("上传用户");
         videoAlbum.setVideoReleaseDate("2024/10/12");
         videoAlbum.setVideoActor("演员");
-        System.out.println(videoAlbumService.addVideoAlbum(videoAlbum));
-        System.out.println(videoAlbum.getVideoAlbumId());*/
+//        System.out.println(videoAlbumService.addVideoAlbum(videoAlbum));
+        System.out.println(videoAlbum.getVideoAlbumId());
     }
 
     @Test
@@ -228,17 +236,17 @@ class OnLineVideoApplicationTests {
         System.out.println(user);
     }
 
-/*    @Test
+    @Test
     public void updateUserPassword() {
         User user = new User();
         user.setUserId(2);
         user.setUserPassword("321");
-        user.setUserNewPassword("123");
-        boolean s=userMapper.updateUserPassword(user);
-        System.out.println(s);
-    }*/
+//        user.setUserNewPassword("123");
+//        boolean s=userMapper.updateUserPassword(user);
+//        System.out.println(s);
+    }
 
-/*    @Test
+    @Test
     public void findVideos() {
         Video video = new Video();
 //        video.setVideoApprovalStatus("审核通过");
@@ -252,19 +260,19 @@ class OnLineVideoApplicationTests {
 //        videoAlbum.setVideoAlbumId(2);
         videoAlbum.setUserId(2);
 //        videoAlbum.setVideoChannel("动漫");
-        video.setVideoAlbum(videoAlbum);
+//        video.setVideoAlbum(videoAlbum);
 
         List<Video> videos = videoService.findVideos(video);
         System.out.println(videos);
         for (Video v : videos) {
-            System.out.println(v.getVideoId()+":"+v.getVideoAlbum().getUserId());
+//            System.out.println(v.getVideoId()+":"+v.getVideoAlbum().getUserId());
         }
 //        video.setVideoName("8");
 //        List<Video> videos1 = videoService.findVideos(video);
 //        for (Video v : videos1) {
 //            System.out.println(videos1);
 //        }
-    }*/
+    }
 
     @Test
     public void searchVideo() {
@@ -275,7 +283,7 @@ class OnLineVideoApplicationTests {
         System.out.println(videos.size());
     }
 
-/*    @Test
+    @Test
     public void getIndexVideo() {
         Video video = new Video();
 //        video.setPageSize(5);
@@ -284,13 +292,13 @@ class OnLineVideoApplicationTests {
 //        videoAlbum.setUserId(41);
 //        videoAlbum.setVideoAlbumId(14);
 //        videoAlbum.setVideoChannel("动漫");
-        video.setVideoAlbum(videoAlbum);
+//        video.setVideoAlbum(videoAlbum);
 //        video.getVideoAlbum().setUserId(41);
 //        video.setVideoApprovalStatus("审核通过");
 //        video.setVideoName("遮天");
         List<Video> videos = videoService.getIndexVideo(video);
 //        System.out.println(videos);
-        for (Video v : videos) {
+/*        for (Video v : videos) {
 //            System.out.println(v.getVideoAlbum());
             if (v.getVideoAlbum()!=null) {
                 System.out.println(v.getVideoId());
@@ -298,9 +306,9 @@ class OnLineVideoApplicationTests {
             }else {
                 System.out.println("VideoAlbum is null for videoId: " + v.getVideoId());
             }
-        }
+        }*/
 
-    }*/
+    }
 
     @Test
     public void getVideoComments() {
@@ -313,16 +321,16 @@ class OnLineVideoApplicationTests {
         System.out.println(videoComments);
     }
 
-  /*  @Test
+    @Test
     public void insertVideoComment() {
         VideoComment videoComment = new VideoComment();
         videoComment.setVideoCommentContent("测试内容");
         videoComment.setVideoId(10);
         videoComment.setUserId(2);
-        videoComment.setVideoCommentTime("2023-08-18 16:02:42");
+//        videoComment.setVideoCommentTime("2023-08-18 16:02:42");
         System.out.println(videoComment);
         System.out.println(videoCommentMapper.addVideoComment(videoComment));
-    }*/
+    }
 
 
     @Test

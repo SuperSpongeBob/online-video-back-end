@@ -36,6 +36,9 @@ public interface VideoMapper {
     //  根据id查找视频
     Optional<Video> findVideoByVideoId(Integer videoId);
 
+    //  根据专辑id查找视频
+    List<VideoDTO> videosInSameAlbum(Integer videoId);
+
     //  用户重申视频，将禁播改为待审核
     boolean reiterateVideo(Integer videoId);
 

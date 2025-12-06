@@ -199,6 +199,16 @@ public class VideoController {
         }
     }
 
+    @GetMapping("/videosInSameAlbum")
+    public ResponseEntity<?> getVideoByAlbumId(@RequestParam(value = "videoId") Integer videoId) {
+        List<VideoDTO> videos = videoService.videosInSameAlbum(videoId);
+        if (!videos.isEmpty()) {
+            return ResponseEntity.ok(videos);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
     //根据id验证是否能观看视频     仅用于返回信息给用户，具体能否观看不受影响
     @GetMapping("/verify")
     public ResponseEntity<?> verifyVip(@RequestParam(value = "videoId") String videoId, HttpServletRequest request) {

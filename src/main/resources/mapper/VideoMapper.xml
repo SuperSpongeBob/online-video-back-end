@@ -161,6 +161,18 @@
         where video_id = #{videoId}
     </select>
 
+    <select id="videosInSameAlbum" resultType="com.example.onlinevideo.DTO.VideoDTO">
+        SELECT v.*,va.video_album_name
+        FROM video v
+                 JOIN video_album va ON v.video_album_id = va.video_album_id
+                 JOIN (
+            SELECT video_album_id
+            FROM video
+            WHERE video_id = #{videoId}
+        ) sub ON v.video_album_id = sub.video_album_id
+    </select>
+
+
     <select id="SearchVideo" resultType="com.example.onlinevideo.DTO.VideoDTO">
         select v.*,va.video_channel
         from video v
@@ -320,6 +332,7 @@
         ORDER BY view_count DESC, video_id DESC
         LIMIT #{limit}
     </select>
+
 
 
 </mapper>

@@ -61,6 +61,7 @@ public class SecurityConfig {
                         "/api/getDanmaku",
                         "/api/IndexVideos",
                         "/api/recommendVideos",
+                        "/api/videosInSameAlbum",
                         "/api/increaseViewCount",
                         "/api/existsVideo",
                         "/api/verify",

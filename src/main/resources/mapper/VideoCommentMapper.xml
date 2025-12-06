@@ -13,7 +13,7 @@
         LIMIT #{pageNum}, #{pageSize}
     </select>
 
-    <insert id="addVideoComment" parameterType="com.example.onlinevideo.Entity.VideoComment">
+    <insert id="addVideoComment" parameterType="com.example.onlinevideo.Entity.VideoComment" useGeneratedKeys="true" keyProperty="Comment.videoCommentId">
         insert into comment (video_comment_content,video_comment_time,user_id,video_id,parent_id,reply_to_id)
         values (#{Comment.videoCommentContent},#{Comment.videoCommentTime},#{Comment.userId},#{Comment.videoId},#{Comment.parentId},#{Comment.replyToId})
     </insert>
