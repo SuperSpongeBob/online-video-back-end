@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -74,4 +75,6 @@ public interface VideoMapper {
 
     // 新增：获取最热视频ID
     List<Integer> selectHottestVideoIds(@Param("limit") int limit);
+
+    Map<String, Object> getVideoTypeAndSourceUrl(Integer videoId);
 }

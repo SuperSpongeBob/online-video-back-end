@@ -52,4 +52,29 @@
     <logger name="com.example.onlinevideo" level="INFO" additivity="false">
         <appender-ref ref="FILE" />
     </logger>
+
+    <!-- MyBatis SQL日志配置 - 打印SQL语句和参数 -->
+    <logger name="com.example.onlinevideo.Mapper" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+    
+    <!-- MyBatis框架日志 - 显示SQL执行过程 -->
+    <logger name="org.apache.ibatis" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+    
+    <!-- JDBC SQL日志 - 显示完整的SQL语句和参数 -->
+    <logger name="java.sql.Connection" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+    <logger name="java.sql.Statement" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+    <logger name="java.sql.PreparedStatement" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+    <logger name="java.sql.ResultSet" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+    </logger>
 </configuration>

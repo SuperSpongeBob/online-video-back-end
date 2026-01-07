@@ -2,6 +2,7 @@ package com.example.onlinevideo;
 
 import com.example.onlinevideo.Controller.VideoAlbumController;
 import com.example.onlinevideo.DTO.VideoDTO;
+import com.example.onlinevideo.Enum.VideoApprovalStatus;
 import com.example.onlinevideo.Mapper.*;
 import com.example.onlinevideo.Entity.*;
 import com.example.onlinevideo.Security.CustomUserDetails;
@@ -170,8 +171,8 @@ class OnLineVideoApplicationTests {
     public void updateVideo(){
         Video video = new Video();
         video.setVideoId(6);
-//        video.setVideoApprovalStatus("审核通过");
-        video.setVideoApprovalStatus("待审核");
+//        video.setVideoApprovalStatus(VideoApprovalStatus.REVIEW_PASSED);
+        video.setVideoApprovalStatus(VideoApprovalStatus.PENDING_REVIEW);
         System.out.println(videoService.updateVideo(video));
     }
 
@@ -249,7 +250,7 @@ class OnLineVideoApplicationTests {
     @Test
     public void findVideos() {
         Video video = new Video();
-//        video.setVideoApprovalStatus("审核通过");
+//        video.setVideoApprovalStatus(VideoApprovalStatus.REVIEW_PASSED);
         video.setPageNum(1);
         video.setPageSize(33);
 //        video.setVideoId(2);
@@ -294,7 +295,7 @@ class OnLineVideoApplicationTests {
 //        videoAlbum.setVideoChannel("动漫");
 //        video.setVideoAlbum(videoAlbum);
 //        video.getVideoAlbum().setUserId(41);
-//        video.setVideoApprovalStatus("审核通过");
+//        video.setVideoApprovalStatus(VideoApprovalStatus.REVIEW_PASSED);
 //        video.setVideoName("遮天");
         List<Video> videos = videoService.getIndexVideo(video);
 //        System.out.println(videos);

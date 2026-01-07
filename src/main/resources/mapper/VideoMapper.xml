@@ -8,13 +8,14 @@
         <id property="videoId" column="video_id" jdbcType="INTEGER"/>
         <id property="videoAlbumId" column="video_album_id" jdbcType="INTEGER"/>
         <result property="videoName" column="video_name" jdbcType="VARCHAR"/>
-        <result property="videoIsVip" column="video_is_vip" jdbcType="INTEGER"/>
+        <result property="videoType" column="video_type" jdbcType="TINYINT" typeHandler="com.example.onlinevideo.TypeHandler.VideoTypeTypeHandler"/>
+        <result property="sourceVideoUrl" column="source_video_url" jdbcType="VARCHAR"/>
         <result property="videoPath" column="video_path" jdbcType="VARCHAR"/>
         <result property="videoTitle" column="video_title" jdbcType="VARCHAR"/>
         <result property="duration" column="duration" jdbcType="INTEGER"/>
         <result property="viewCount" column="view_count" jdbcType="INTEGER"/>
         <result property="thumbnailPath" column="thumbnail_path" jdbcType="VARCHAR"/>
-        <result property="videoApprovalStatus" column="video_approval_status" jdbcType="VARCHAR"/>
+        <result property="videoApprovalStatus" column="video_approval_status" jdbcType="TINYINT" typeHandler="com.example.onlinevideo.TypeHandler.VideoApprovalStatusTypeHandler"/>
         <association property="videoAlbum" javaType="com.example.onlinevideo.Entity.VideoAlbum">
             <id property="videoAlbumId" column="video_album_id" jdbcType="INTEGER"/>
             <result property="userId" column="user_id" jdbcType="INTEGER"/>
@@ -34,7 +35,14 @@
     </resultMap>
 
     <select id="verifyVideo" resultType="java.lang.Integer">
-        select video_is_vip
+        select video_type
+        from video
+        where video_id = #{videoId}
+    </select>
+    
+    <!-- 获取视频类型和源视频链接 -->
+    <select id="getVideoTypeAndSourceUrl" resultType="java.util.Map">
+        select CAST(video_type AS SIGNED) as videoType, source_video_url as sourceVideoUrl
         from video
         where video_id = #{videoId}
     </select>
@@ -82,10 +90,10 @@
         <where>
             <if test="videoId!=null and videoId!=''">and video_id=#{videoId}</if>
             <if test="videoAlbumId!=null and videoAlbumId!=''">and video.video_album_id=#{videoAlbumId}</if>
-            <if test="videoIsVip!=null">and video_is_vip=#{videoIsVip}</if>
+            <if test="videoType!=null">and video_type=#{videoType, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoTypeTypeHandler}</if>
             <if test="videoTitle!=null and videoTitle!=''">and video_title like "%${videoTitle}%"</if>
-            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">and
-                video_approval_status=#{videoApprovalStatus}
+            <if test="videoApprovalStatus!=null">and
+                video_approval_status=#{videoApprovalStatus, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoApprovalStatusTypeHandler}
             </if>
             <if test="videoName!=null and videoName!=''">and video_name LIKE "%${videoName}%"</if>
 
@@ -135,9 +143,9 @@
         <where>
             <if test="videoId!=null and videoId!=''">and video_id=#{videoId}</if>
             <if test="videoName!=null and videoName!=''">and video_name like "%${videoName}%"</if>
-            <if test="videoIsVip!=null and videoIsVip!=''">and video_is_vip=#{videoIsVip}</if>
-            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">and
-                v.video_approval_status=#{videoApprovalStatus}
+            <if test="videoType!=null">and v.video_type=#{videoType, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoTypeTypeHandler}</if>
+            <if test="videoApprovalStatus!=null">and
+                v.video_approval_status=#{videoApprovalStatus, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoApprovalStatusTypeHandler}
             </if>
         </where>
         order by v.video_id desc
@@ -155,10 +163,13 @@
         </where>
     </select>
 
-    <select id="findVideoByVideoId" resultType="com.example.onlinevideo.Entity.Video">
-        select *
-        from video
-        where video_id = #{videoId}
+    <select id="findVideoByVideoId" resultMap="VideoMap">
+        select v.*, va.user_id, va.video_album_name, va.video_channel, va.video_post_path,
+               va.video_release_date, va.video_summary, va.video_play_number, va.video_director,
+               va.video_area, va.video_favorite_number, va.video_update_time, va.video_last_update, va.video_actor
+        from video v
+        left join video_album va on v.video_album_id = va.video_album_id
+        where v.video_id = #{videoId}
     </select>
 
     <select id="videosInSameAlbum" resultType="com.example.onlinevideo.DTO.VideoDTO">
@@ -187,8 +198,8 @@
                 OR va.video_actor LIKE "%${videoName}%"
                 OR va.video_director LIKE "%${videoName}%")
             </if>
-            <if test="videoApprovalStatus != null and videoApprovalStatus != ''">
-                and v.video_approval_status=#{videoApprovalStatus}
+            <if test="videoApprovalStatus != null">
+                and v.video_approval_status=#{videoApprovalStatus, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoApprovalStatusTypeHandler}
             </if>
         </where>
         order by v.video_id desc
@@ -198,26 +209,30 @@
     <insert id="insertVideo" parameterType="com.example.onlinevideo.Entity.Video">
         insert into `video`(
         <trim suffixOverrides=",">
+            <if test="videoType != null">video_type,</if>
             <if test="videoIsVip != null and videoIsVip != ''">video_is_vip,</if>
+            <if test="sourceVideoUrl != null and sourceVideoUrl != ''">source_video_url,</if>
             <if test="videoName != null and videoName != ''">video_name,</if>
             <if test="videoPath != null and videoPath != ''">video_path,</if>
             <if test="videoTitle != null and videoTitle != ''">video_title,</if>
             <if test="videoAlbumId!=null and videoAlbumId!=''">video_album_id,</if>
             <if test="duration!=null and duration!=''">duration,</if>
             <if test="thumbnailPath!=null and thumbnailPath!=''">thumbnail_path,</if>
-            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">video_approval_status,</if>
+            <if test="videoApprovalStatus!=null">video_approval_status,</if>
         </trim>
         )
         values (
         <trim suffixOverrides=",">
+            <if test="videoType != null">#{videoType, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoTypeTypeHandler},</if>
             <if test="videoIsVip != null and videoIsVip != ''">#{videoIsVip},</if>
+            <if test="sourceVideoUrl != null and sourceVideoUrl != ''">#{sourceVideoUrl},</if>
             <if test="videoName != null and videoName != ''">#{videoName},</if>
             <if test="videoPath != null and videoPath != ''">#{videoPath},</if>
             <if test="videoTitle != null and videoTitle != ''">#{videoTitle},</if>
             <if test="videoAlbumId != null and videoAlbumId != ''">#{videoAlbumId},</if>
             <if test="duration != null and duration != ''">#{duration},</if>
             <if test="thumbnailPath!=null and thumbnailPath!=''">#{thumbnailPath},</if>
-            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">#{videoApprovalStatus},</if>
+            <if test="videoApprovalStatus!=null">#{videoApprovalStatus, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoApprovalStatusTypeHandler},</if>
         </trim>
         )
     </insert>
@@ -225,15 +240,17 @@
     <update id="updateVideo">
         update video
         <set>
+            <if test="videoType != null">video_type=#{videoType, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoTypeTypeHandler},</if>
             <if test="videoIsVip!=null and videoIsVip!=''">video_is_vip=#{videoIsVip},</if>
+            <if test="sourceVideoUrl!=null and sourceVideoUrl!=''">source_video_url=#{sourceVideoUrl},</if>
             <if test="videoName!=null and videoName!=''">video_name=#{videoName},</if>
             <if test="videoTitle!=null and videoTitle!=''">video_title=#{videoTitle},</if>
             <if test="videoPath!=null and videoPath!=''">video_path=#{videoPath},</if>
             <if test="videoAlbumId!=null and videoAlbumId!=''">video_album_id=#{videoAlbumId},</if>
             <if test="duration != null and duration !=''">duration=#{duration},</if>
             <if test="thumbnailPath!=null and thumbnailPath!=''">thumbnail_path=#{thumbnailPath},</if>
-            <if test="videoApprovalStatus!=null and videoApprovalStatus!=''">
-                video_approval_status=#{videoApprovalStatus},
+            <if test="videoApprovalStatus!=null">
+                video_approval_status=#{videoApprovalStatus, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.VideoApprovalStatusTypeHandler},
             </if>
         </set>
         where video_id=#{videoId}
@@ -242,7 +259,7 @@
     <update id="reiterateVideo">
         update video
         <set>
-            video_approval_status = "待审核"
+            video_approval_status = 0
         </set>
         where video_id = #{videoId}
     </update>
@@ -272,7 +289,7 @@
     <select id="selectNewestVideos" resultType="com.example.onlinevideo.Entity.Video">
         SELECT *
         FROM video
-        where video_approval_status = "审核通过"
+        where video_approval_status = 2
         ORDER BY video_id DESC
         LIMIT #{limit}
     </select>
@@ -281,7 +298,7 @@
     <select id="selectHottestVideos" resultType="com.example.onlinevideo.Entity.Video">
         SELECT *
         FROM video
-        where video_approval_status = "审核通过"
+        where video_approval_status = 2
         ORDER BY view_count DESC, video_id DESC
         LIMIT #{limit}
     </select>
@@ -290,7 +307,7 @@
     <select id="selectVideosOrderByIdDesc" resultType="com.example.onlinevideo.DTO.VideoDTO">
         SELECT video.*,va.video_channel FROM video
         join video_album va on video.video_album_id=va.video_album_id
-        WHERE video_approval_status = "审核通过"
+        WHERE video_approval_status = 2
         <!-- 动态添加NOT IN子句 -->
         <if test="usedIds != null and usedIds.size() > 0">
             AND video_id NOT IN
@@ -312,14 +329,14 @@
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
-        AND video_approval_status = "审核通过"
+        AND video_approval_status = 2
     </select>
 
     <!-- 获取最新视频ID -->
     <select id="selectNewestVideoIds" resultType="java.lang.Integer">
         SELECT video_id
         FROM video
-        WHERE video_approval_status = "审核通过"
+        WHERE video_approval_status = 2
         ORDER BY video_id DESC
         LIMIT #{limit}
     </select>
@@ -328,7 +345,7 @@
     <select id="selectHottestVideoIds" resultType="java.lang.Integer">
         SELECT video_id
         FROM video
-        WHERE video_approval_status = "审核通过"
+        WHERE video_approval_status = 2
         ORDER BY view_count DESC, video_id DESC
         LIMIT #{limit}
     </select>

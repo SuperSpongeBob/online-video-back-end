@@ -150,11 +150,13 @@ DROP TABLE IF EXISTS `video`;
 CREATE TABLE `video`  (
   `video_id` int NOT NULL AUTO_INCREMENT COMMENT '视频id',
   `video_album_id` int NULL DEFAULT NULL COMMENT '关联专辑id、多对一',
-  `video_is_vip` int NULL DEFAULT 0 COMMENT '是否为VIP视频：0免费、1VIP',
+  `video_type` tinyint NULL DEFAULT 0 COMMENT '视频类型：0-免费, 1-收费, 2-VIP, 3-无版权, 4-独播',
+  `video_is_vip` int NULL DEFAULT 0 COMMENT '是否为VIP视频：0免费、1VIP（已废弃，使用video_type代替）',
+  `source_video_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '源视频链接（当举报类型为侵权时使用）',
   `video_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '视频名称',
   `view_count` int NULL DEFAULT 0 COMMENT '视频的播放量',
   `video_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '视频标题',
-  `video_approval_status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '审核状态：未审核(unaudited) | 审核通过(pass) | 禁播(ban)',
+  `video_approval_status` tinyint NULL DEFAULT 0 COMMENT '审核状态：0-待审核(PENDING_REVIEW), 1-审核中(UNDER_REVIEW), 2-审核通过(REVIEW_PASSED), 3-审核拒绝(REVIEW_REJECTED)',
   `duration` int NULL DEFAULT 0 COMMENT '视频时长',
   `video_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '视频路径、相对路径(在服务器中的文件名）',
   `thumbnail_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '视频缩略图路径',
@@ -192,6 +194,32 @@ CREATE TABLE `video_album`  (
 
 -- ----------------------------
 -- Records of video_album
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for video_report_record
+-- ----------------------------
+DROP TABLE IF EXISTS `video_report_record`;
+CREATE TABLE `video_report_record`  (
+  `report_id` int NOT NULL AUTO_INCREMENT COMMENT '举报记录id',
+  `reporter_id` int NOT NULL COMMENT '举报人ID',
+  `video_id` int NOT NULL COMMENT '被举报视频ID',
+  `report_status` tinyint NULL DEFAULT 0 COMMENT '举报状态：0-待处理(PENDING), 1-处理中(PROCESSING), 2-已处理(PROCESSED), 3-已驳回(REJECTED)',
+  `report_type` tinyint NULL DEFAULT NULL COMMENT '举报类型：0-侵权(INFRINGEMENT), 1-色情(PORNOGRAPHY), 2-暴力(VIOLENCE), 3-其他(OTHER)',
+  `report_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '举报描述',
+  `report_time` bigint NULL DEFAULT NULL COMMENT '举报时间（时间戳）',
+  `handler_id` int NULL DEFAULT NULL COMMENT '处理人ID（管理员）',
+  `handle_time` bigint NULL DEFAULT NULL COMMENT '处理时间（时间戳）',
+  `handle_remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '处理备注',
+  PRIMARY KEY (`report_id`) USING BTREE,
+  INDEX `report_reporter_ibfk1`(`reporter_id` ASC) USING BTREE,
+  INDEX `report_video_ibfk2`(`video_id` ASC) USING BTREE,
+  CONSTRAINT `report_reporter_ibfk1` FOREIGN KEY (`reporter_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `report_video_ibfk2` FOREIGN KEY (`video_id`) REFERENCES `video` (`video_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of video_report_record
 -- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

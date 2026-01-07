@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.onlinevideo.Mapper.VideoReportRecordMapper">
+
+    <resultMap id="VideoReportRecordMap" type="com.example.onlinevideo.Entity.VideoReportRecord">
+        <id property="reportId" column="report_id" jdbcType="INTEGER"/>
+        <result property="reporterId" column="reporter_id" jdbcType="INTEGER"/>
+        <result property="videoId" column="video_id" jdbcType="INTEGER"/>
+        <result property="reportStatus" column="report_status" jdbcType="TINYINT" typeHandler="com.example.onlinevideo.TypeHandler.ReportStatusTypeHandler"/>
+        <result property="reportType" column="report_type" jdbcType="TINYINT" typeHandler="com.example.onlinevideo.TypeHandler.ReportTypeTypeHandler"/>
+        <result property="reportDescription" column="report_description" jdbcType="VARCHAR"/>
+        <result property="reportTime" column="report_time" jdbcType="BIGINT"/>
+        <result property="handlerId" column="handler_id" jdbcType="INTEGER"/>
+        <result property="handleTime" column="handle_time" jdbcType="BIGINT"/>
+        <result property="handleRemark" column="handle_remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insertReportRecord" parameterType="com.example.onlinevideo.Entity.VideoReportRecord">
+        insert into video_report_record(
+            reporter_id,
+            video_id,
+            report_status,
+            report_type,
+            report_description,
+            report_time
+        ) values (
+            #{reporterId},
+            #{videoId},
+            #{reportStatus, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.ReportStatusTypeHandler},
+            #{reportType, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.ReportTypeTypeHandler},
+            #{reportDescription},
+            #{reportTime}
+        )
+    </insert>
+
+    <select id="findReportRecordById" resultMap="VideoReportRecordMap">
+        select * from video_report_record
+        where report_id = #{reportId}
+    </select>
+
+    <select id="findReportRecordsByVideoId" resultMap="VideoReportRecordMap">
+        select * from video_report_record
+        where video_id = #{videoId}
+        order by report_time desc
+    </select>
+
+    <select id="findReportRecordsByReporterId" resultMap="VideoReportRecordMap">
+        select * from video_report_record
+        where reporter_id = #{reporterId}
+        order by report_time desc
+    </select>
+
+    <select id="findReportRecords" resultMap="VideoReportRecordMap">
+        select * from video_report_record
+        <where>
+            <if test="reportId != null">and report_id = #{reportId}</if>
+            <if test="reporterId != null">and reporter_id = #{reporterId}</if>
+            <if test="videoId != null">and video_id = #{videoId}</if>
+            <if test="reportStatus != null">and report_status = #{reportStatus, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.ReportStatusTypeHandler}</if>
+            <if test="reportType != null">and report_type = #{reportType, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.ReportTypeTypeHandler}</if>
+        </where>
+        order by report_time desc
+        <if test="pageNum != null and pageSize != null">LIMIT #{pageNum}, #{pageSize}</if>
+    </select>
+
+    <update id="updateReportRecord">
+        update video_report_record
+        <set>
+            <if test="reportStatus != null">report_status = #{reportStatus, jdbcType=TINYINT, typeHandler=com.example.onlinevideo.TypeHandler.ReportStatusTypeHandler},</if>
+            <if test="handlerId != null">handler_id = #{handlerId},</if>
+            <if test="handleTime != null">handle_time = #{handleTime},</if>
+            <if test="handleRemark != null">handle_remark = #{handleRemark},</if>
+        </set>
+        where report_id = #{reportId}
+    </update>
+
+    <delete id="deleteReportRecord">
+        delete from video_report_record
+        where report_id = #{reportId}
+    </delete>
+
+    <select id="countReportsByVideoId" resultType="int">
+        select count(*) from video_report_record
+        where video_id = #{videoId}
+    </select>
+
+    <select id="existsReportByUserAndVideo" resultType="boolean">
+        select exists(
+            select 1 from video_report_record
+            where reporter_id = #{reporterId} and video_id = #{videoId}
+        )
+    </select>
+
+</mapper>
+

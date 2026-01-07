@@ -3,6 +3,7 @@ package com.example.onlinevideo.Controller;
 import com.example.onlinevideo.Annotation.RateLimit;
 import com.example.onlinevideo.Entity.Video;
 import com.example.onlinevideo.Entity.VideoAlbum;
+import com.example.onlinevideo.Enum.VideoApprovalStatus;
 import com.example.onlinevideo.Service.VideoAlbumService;
 import com.example.onlinevideo.Service.VideoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -188,7 +189,7 @@ public class VideoUploadController {
                     // 保存专辑和视频信息
                     videoAlbumService.upsertVideoAlbum(videoAlbumObj);
                     videoObj.setVideoAlbumId(videoAlbumObj.getVideoAlbumId());
-                    videoObj.setVideoApprovalStatus("待审核");
+                    videoObj.setVideoApprovalStatus(VideoApprovalStatus.PENDING_REVIEW);
                     videoService.insertVideo(videoObj);
 
                     return ResponseEntity.ok().body(true);

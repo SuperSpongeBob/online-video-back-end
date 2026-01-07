@@ -2,6 +2,7 @@ package com.example.onlinevideo.Service;
 
 import com.example.onlinevideo.DTO.VideoDTO;
 import com.example.onlinevideo.Entity.VideoComment;
+import com.example.onlinevideo.Enum.VideoType;
 import com.example.onlinevideo.Mapper.UserMapper;
 import com.example.onlinevideo.Mapper.VideoMapper;
 import com.example.onlinevideo.Entity.Danmaku;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -43,25 +46,45 @@ public class VideoService {
 
     /**
      * @param videoId
-     * @return false 代表视频免费，放行； ture  代表用户权限不足，禁止观看
+     * @return false 代表视频免费，放行； true  代表用户权限不足，禁止观看
      */
     public boolean verifyVideo(String videoId, String token) {
-        Integer videoIsVip = videoMapper.verifyVideo(videoId);   //  根据视频id获取该视频的全部信息
+        Integer videoTypeCode = videoMapper.verifyVideo(videoId);   //  根据视频id获取视频类型
+        
+        if (videoTypeCode == null) {
+            return true; // 视频不存在，禁止观看
+        }
 
-        if (videoIsVip.equals(1)) {
-            return false;                   //  1即为免费，false放行，不进行权限校验
+        //  解析token获取userId
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token.replace("Bearer ", ""))
+                .getBody();
+
+        //  获取用户角色
+        List<String> roles = (List<String>) claims.get("roles");
+
+        if (roles.contains("ROLE_ADMIN")) {
+            return false;
+        }
+
+        
+        VideoType videoType = VideoType.fromCode(videoTypeCode);
+        
+        // 免费视频直接放行
+        if (videoType == VideoType.FREE) {
+            return false;
+        }
+        
+        // 无版权视频允许观看30秒
+        if (videoType == VideoType.NO_COPYRIGHT) {
+            return true;
         }
 
         if (token != null && !token.isEmpty()) {
-            //  解析token获取userId
-            Claims claims = Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token.replace("Bearer ", ""))
-                    .getBody();
 
-            if (videoIsVip.equals(2)) {
-                //  获取用户角色
-                List<String> roles = (List<String>) claims.get("roles");
+            // VIP视频需要VIP或管理员权限
+            if (videoType == VideoType.VIP) {
 
                 //  判断用户角色，如果为 admin 或 VIP 则可以观看
                 if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_VIP")) {
@@ -77,6 +100,60 @@ public class VideoService {
             return userId == null || !userId.equals(userMapper.getUserIdByVideoId(Integer.parseInt(videoId)));
         }
         return true;   //   用户既不是VIP，也不是视频的发布者
+    }
+    
+    /**
+     * 获取视频类型和源视频链接信息
+     * @param videoId 视频ID
+     * @return Map包含videoType和sourceVideoUrl，videoType为枚举名称（如NO_COPYRIGHT）
+     */
+    public Map<String, Object> getVideoTypeAndSourceUrl(Integer videoId) {
+        Map<String, Object> result = videoMapper.getVideoTypeAndSourceUrl(videoId);
+        if (result != null && result.containsKey("videoType")) {
+            Object videoTypeObj = result.get("videoType");
+            if (videoTypeObj != null) {
+                // 将数字代码转换为枚举名称
+                Integer videoTypeCode = null;
+                
+                // 处理各种可能的类型
+                if (videoTypeObj instanceof Integer) {
+                    videoTypeCode = (Integer) videoTypeObj;
+                } else if (videoTypeObj instanceof Boolean) {
+                    // MyBatis 可能将 tinyint 映射为 Boolean（0=false, 非0=true）
+                    // 这种情况下，我们需要重新查询获取原始值
+                    log.warn("videoType 被映射为 Boolean 类型，重新查询原始值");
+                    Integer rawCode = videoMapper.verifyVideo(videoId.toString());
+                    if (rawCode != null) {
+                        videoTypeCode = rawCode;
+                    }
+                } else if (videoTypeObj instanceof Number) {
+                    videoTypeCode = ((Number) videoTypeObj).intValue();
+                } else if (videoTypeObj instanceof String) {
+                    try {
+                        videoTypeCode = Integer.parseInt((String) videoTypeObj);
+                    } catch (NumberFormatException e) {
+                        // 如果已经是字符串格式（枚举名称），直接使用
+                        return result;
+                    }
+                } else if (videoTypeObj instanceof VideoType) {
+                    // 如果已经是枚举类型，直接获取名称
+                    result.put("videoType", ((VideoType) videoTypeObj).name());
+                    return result;
+                }
+                
+                if (videoTypeCode != null) {
+                    try {
+                        VideoType videoType = VideoType.fromCode(videoTypeCode);
+                        // 返回枚举名称（如 NO_COPYRIGHT）
+                        result.put("videoType", videoType.name());
+                    } catch (IllegalArgumentException e) {
+                        // 如果无法转换，保持原值
+                        log.warn("无法转换视频类型代码: {}", videoTypeCode);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     public String getVideoPathByVideoId(String videoId) {
