@@ -1,0 +1,134 @@
+version: '3.8'
+
+services:
+  # ==================== MySQL 数据库 ====================
+  mysql:
+    image: mysql:8.0
+    container_name: onlinevideo-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-online_video}
+      MYSQL_USER: ${MYSQL_USER:-onlinevideo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-123456}
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./online_video.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    networks:
+      - onlinevideo-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-123456}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ==================== Redis 缓存 ====================
+  redis:
+    image: redis:7-alpine
+    container_name: onlinevideo-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - onlinevideo-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ==================== 后端服务 ====================
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    container_name: onlinevideo-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-online_video}
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-aVeryLongAndSecureSecretKeyThatIsAtLeast64CharactersLong1234567890abcdefghijklmnopqrstuvwxyz}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      MAIL_HOST: ${MAIL_HOST:-smtp.qq.com}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      STORAGE_PATH: /app/storage
+      VIDEO_UPLOAD_DIR: /app/storage/videos
+      IMAGE_UPLOAD_DIR: /app/storage/images
+      TZ: Asia/Shanghai
+    volumes:
+      - upload-data:/app/storage
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    networks:
+      - onlinevideo-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ==================== 前端服务 ====================
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    container_name: onlinevideo-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    networks:
+      - onlinevideo-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# ==================== 网络配置 ====================
+networks:
+  onlinevideo-network:
+    driver: bridge
+    name: onlinevideo-network
+
+# ==================== 数据卷配置 ====================
+volumes:
+  mysql-data:
+    name: onlinevideo-mysql-data
+  redis-data:
+    name: onlinevideo-redis-data
+  upload-data:
+    name: onlinevideo-upload-data

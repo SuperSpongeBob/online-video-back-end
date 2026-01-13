@@ -1,4 +1,5 @@
 HELP.md
+front/
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -17,9 +18,11 @@ logs/*.log
 
 ### IntelliJ IDEA ###
 .idea
+.kiro
 *.iws
 *.iml
 *.ipr
+*.env
 
 ### NetBeans ###
 /nbproject/private/
