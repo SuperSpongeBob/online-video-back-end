@@ -55,6 +55,23 @@ public class VideoService {
             return true; // 视频不存在，禁止观看
         }
 
+        VideoType videoType = VideoType.fromCode(videoTypeCode);
+        
+        // 免费视频直接放行
+        if (videoType == VideoType.FREE) {
+            return false;
+        }
+        
+        // 无版权视频允许观看30秒
+        if (videoType == VideoType.NO_COPYRIGHT) {
+            return true;
+        }
+
+        // 如果 token 为空或 null，说明用户未登录
+        if (token == null || token.isEmpty()) {
+            return true; // 未登录用户不能观看付费/VIP视频
+        }
+
         //  解析token获取userId
         Claims claims = Jwts.parser()
                 .setSigningKey(SECRET_KEY)
@@ -68,38 +85,22 @@ public class VideoService {
             return false;
         }
 
-        
-        VideoType videoType = VideoType.fromCode(videoTypeCode);
-        
-        // 免费视频直接放行
-        if (videoType == VideoType.FREE) {
-            return false;
-        }
-        
-        // 无版权视频允许观看30秒
-        if (videoType == VideoType.NO_COPYRIGHT) {
-            return true;
-        }
-
-        if (token != null && !token.isEmpty()) {
-
-            // VIP视频需要VIP或管理员权限
-            if (videoType == VideoType.VIP) {
-
-                //  判断用户角色，如果为 admin 或 VIP 则可以观看
-                if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_VIP")) {
-                    return false;
-                }
+        // VIP视频需要VIP或管理员权限
+        if (videoType == VideoType.VIP) {
+            //  判断用户角色，如果为 admin 或 VIP 则可以观看
+            if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_VIP")) {
+                return false;
             }
-
-            //  从token中解析出当前登录的用户Id
-            Integer userId = claims.get("userId", Integer.class);
-
-            //  如果当前视频为当前用户所发布，可以进行观看
-            //  判断该视频是否为用户所发布
-            return userId == null || !userId.equals(userMapper.getUserIdByVideoId(Integer.parseInt(videoId)));
         }
-        return true;   //   用户既不是VIP，也不是视频的发布者
+
+        //  从token中解析出当前登录的用户Id
+        Integer userId = claims.get("userId", Integer.class);
+
+        //  如果当前视频为当前用户所发布，可以进行观看
+        //  判断该视频是否为用户所发布
+        return userId == null || !userId.equals(userMapper.getUserIdByVideoId(Integer.parseInt(videoId)));
+
+//        return true;   //   用户既不是VIP，也不是视频的发布者
     }
     
     /**

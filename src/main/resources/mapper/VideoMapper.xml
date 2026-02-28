@@ -83,7 +83,7 @@
         where video_id = #{videoId}
     </select>
 
-    <select id="findVideos" resultType="com.example.onlinevideo.DTO.VideoDTO">
+    <select id="findVideos" resultMap="VideoDTOResultMap">
         select video.*,video_album.video_channel
         from video
         join video_album on video.video_album_id = video_album.video_album_id
@@ -136,7 +136,26 @@
         <if test="pageNum!=null and pageSize!=null">LIMIT #{pageNum},#{pageSize}</if>
     </select>
 
-    <select id="getIndexVideo" resultType="com.example.onlinevideo.DTO.VideoDTO">
+    <resultMap id="VideoDTOResultMap" type="com.example.onlinevideo.DTO.VideoDTO">
+        <id property="videoId" column="video_id"/>
+        <result property="videoAlbumId" column="video_album_id"/>
+        <result property="videoApprovalStatus" column="video_approval_status" 
+                typeHandler="com.example.onlinevideo.TypeHandler.VideoApprovalStatusTypeHandler"/>
+        <result property="videoName" column="video_name"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="videoTitle" column="video_title"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="duration" column="duration"/>
+        <result property="thumbnailPath" column="thumbnail_path"/>
+        <result property="videoType" column="video_type" 
+                typeHandler="com.example.onlinevideo.TypeHandler.VideoTypeTypeHandler"/>
+        <result property="sourceVideoUrl" column="source_video_url"/>
+        <result property="videoIsVip" column="video_is_vip"/>
+        <result property="videoChannel" column="video_channel"/>
+        <result property="VideoAlbumName" column="video_album_name"/>
+    </resultMap>
+
+    <select id="getIndexVideo" resultMap="VideoDTOResultMap">
         select v.*,va.video_channel
         from video v
         join video_album va on v.video_album_id=va.video_album_id
@@ -172,7 +191,7 @@
         where v.video_id = #{videoId}
     </select>
 
-    <select id="videosInSameAlbum" resultType="com.example.onlinevideo.DTO.VideoDTO">
+    <select id="videosInSameAlbum" resultMap="VideoDTOResultMap">
         SELECT v.*,va.video_album_name
         FROM video v
                  JOIN video_album va ON v.video_album_id = va.video_album_id
@@ -184,7 +203,7 @@
     </select>
 
 
-    <select id="SearchVideo" resultType="com.example.onlinevideo.DTO.VideoDTO">
+    <select id="SearchVideo" resultMap="VideoDTOResultMap">
         select v.*,va.video_channel
         from video v
         join video_album va on v.video_album_id=va.video_album_id
@@ -304,7 +323,7 @@
     </select>
 
     <!-- 按video_id逆序分页获取视频，排除已使用的视频 -->
-    <select id="selectVideosOrderByIdDesc" resultType="com.example.onlinevideo.DTO.VideoDTO">
+    <select id="selectVideosOrderByIdDesc" resultMap="VideoDTOResultMap">
         SELECT video.*,va.video_channel FROM video
         join video_album va on video.video_album_id=va.video_album_id
         WHERE video_approval_status = 2
@@ -321,7 +340,7 @@
 
 
     <!-- 根据ID集合查询视频 -->
-    <select id="selectVideosByIds" resultType="com.example.onlinevideo.DTO.VideoDTO">
+    <select id="selectVideosByIds" resultMap="VideoDTOResultMap">
         SELECT video.*,va.video_channel
         FROM video
         join video_album va on video.video_album_id=va.video_album_id
