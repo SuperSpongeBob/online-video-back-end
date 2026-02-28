@@ -184,7 +184,7 @@
 
     <select id="findVideoByVideoId" resultMap="VideoMap">
         select v.*, va.user_id, va.video_album_name, va.video_channel, va.video_post_path,
-               va.video_release_date, va.video_summary, va.video_play_number, va.video_director,
+               va.video_release_date, va.video_summary, va.video_director,
                va.video_area, va.video_favorite_number, va.video_update_time, va.video_last_update, va.video_actor
         from video v
         left join video_album va on v.video_album_id = va.video_album_id

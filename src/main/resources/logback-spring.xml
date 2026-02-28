@@ -49,8 +49,9 @@
     </root>
 
     <!-- 应用程序日志 -->
-    <logger name="com.example.onlinevideo" level="INFO" additivity="false">
+    <logger name="com.example.onlinevideo" level="DEBUG" additivity="false">
         <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
     </logger>
 
     <!-- MyBatis SQL日志配置 - 打印SQL语句和参数 -->

@@ -44,7 +44,7 @@ public class Video extends Page {
      */
     @Deprecated
     private Integer videoIsVip;
-//    @ManyToOne
-//    private VideoAlbum videoAlbum;
+    @ManyToOne
+    private VideoAlbum videoAlbum;
 
 }
