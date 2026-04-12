@@ -79,8 +79,17 @@ public class AIReplyController {
             
             Integer currentUserId = currentUserService.getCurrentUserId();
             log.debug("当前用户ID: {}", currentUserId);
-            
-            // 2. 验证请求参数
+
+            // 2. 验证用户角色（仅 VIP 和 ADMIN 可调用）
+            boolean hasVipOrAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_VIP") || a.getAuthority().equals("ROLE_ADMIN"));
+            if (!hasVipOrAdmin) {
+                log.warn("普通用户尝试访问 AI 回复功能 - 用户ID: {}", currentUserId);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(AIReplyResponse.error("AI 回复功能仅对 VIP 会员和管理员开放，请升级会员后使用"));
+            }
+
+            // 3. 验证请求参数
             if (bindingResult.hasErrors()) {
                 String errorMessage = bindingResult.getFieldError() != null 
                         ? bindingResult.getFieldError().getDefaultMessage() 
